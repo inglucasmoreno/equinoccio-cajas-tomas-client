@@ -1,0 +1,312 @@
+<div class="container w-11/12 md:w-2/3 border border-gray-400 shadow mx-auto mt-4">
+  <div class="bg-primary-800 text-white flex items-center justify-between p-3">
+    <div class="flex items-center">
+      <app-boton-regresar routerLink="/dashboard/usuarios"></app-boton-regresar>
+      <div class="ml-2">
+        <h1 class="text-2xl ml-2"> Permisos de usuario </h1>
+        <div class="flex items-center mt-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+            <path fill-rule="evenodd"
+              d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z"
+              clip-rule="evenodd" />
+          </svg>
+          <p class="text-sm ml-1"> {{ usuario?.apellido }} {{ usuario?.nombre }} </p>
+        </div>
+      </div>
+    </div>
+    <button (click)="guardarPermisos()" title="Actualizar permisos"
+      class="p-2 hover:text-secondaryColor text-gray-800 bg-gray-100 rounded border border-gray-400">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+      </svg>
+    </button>
+  </div>
+  <div class="p-2">
+
+
+    <div *ngIf="usuario?.role !== 'EMPLOYEE_ROLE'" (click)="abrirCerrarSistema()"
+      class="p-2 cursor-pointer flex items-center justify-between bg-gray-100 border border-gray-400">
+      <p class="font-semibold"> Permisos de sistema </p>
+      <svg *ngIf="muestraSistema" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+        stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+      </svg>
+      <svg *ngIf="!muestraSistema" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+        stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+      </svg>
+    </div>
+
+    <div *ngIf="muestraSistema" class="p-2">
+
+      <!-- Seccion - Ventas -->
+
+      <div class="text-sm">
+        <div (click)="abrirCerrarSeccion('ventas')"
+          class="p-2 cursor-pointer flex items-center justify-between bg-gray-100 border border-gray-400">
+          <p class="font-semibold"> Seccion - Ventas </p>
+          <svg *ngIf="muestraSecciones.ventas" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+            stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+          </svg>
+          <svg *ngIf="!muestraSecciones.ventas" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+            stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+          </svg>
+        </div>
+        <div *ngIf="muestraSecciones.ventas">
+          <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Ventas </p>
+            <select [(ngModel)]="permisosSecciones.VENTAS_PROPIAS"
+              class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="VENTAS_PROPIAS_NOT_ACCESS"> Sin acceso </option>
+              <option value="VENTAS_PROPIAS_READ"> Solo lectura </option>
+              <option value="VENTAS_PROPIAS_ALL"> Permisos totales </option>
+            </select>
+          </div>
+          <!-- <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Recibos de cobro </p>
+            <select [(ngModel)]="permisosSecciones.RECIBOS_COBRO"
+              class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="RECIBOS_COBRO_NOT_ACCESS"> Sin acceso </option>
+              <option value="RECIBOS_COBRO_READ"> Solo lectura </option>
+              <option value="RECIBOS_COBRO_ALL"> Permisos totales </option>
+            </select>
+          </div> -->
+          <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Clientes </p>
+            <select [(ngModel)]="permisosSecciones.CLIENTES" class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="CLIENTES_NOT_ACCESS"> Sin acceso </option>
+              <option value="CLIENTES_READ"> Solo lectura </option>
+              <option value="CLIENTES_ALL"> Permisos totales </option>
+            </select>
+          </div>
+          <!-- <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Cuentas corrientes - Clientes </p>
+            <select [(ngModel)]="permisosSecciones.CUENTAS_CORRIENTES_CLIENTES"
+              class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="CUENTAS_CORRIENTES_CLIENTES_NOT_ACCESS"> Sin acceso </option>
+              <option value="CUENTAS_CORRIENTES_CLIENTES_READ"> Solo lectura </option>
+              <option value="CUENTAS_CORRIENTES_CLIENTES_ALL"> Permisos totales </option>
+            </select>
+          </div> -->
+        </div>
+      </div>
+
+      <!-- Seccion - Compras -->
+      <!--
+      <div class="text-sm mt-2">
+        <div (click)="abrirCerrarSeccion('compras')"
+          class="p-2 cursor-pointer flex items-center justify-between bg-gray-100 border border-gray-400">
+          <p class="font-semibold"> Seccion - Compras </p>
+          <svg *ngIf="muestraSecciones.compras" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+            stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+          </svg>
+          <svg *ngIf="!muestraSecciones.compras" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+            stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+          </svg>
+        </div>
+        <div *ngIf="muestraSecciones.compras">
+          <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Compras </p>
+            <select [(ngModel)]="permisosSecciones.COMPRAS" class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="COMPRAS_NOT_ACCESS"> Sin acceso </option>
+              <option value="COMPRAS_READ"> Solo lectura </option>
+              <option value="COMPRAS_ALL"> Permisos totales </option>
+            </select>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Ordenes de pago </p>
+            <select [(ngModel)]="permisosSecciones.ORDENES_PAGO"
+              class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="ORDENES_PAGO_NOT_ACCESS"> Sin acceso </option>
+              <option value="ORDENES_PAGO_READ"> Solo lectura </option>
+              <option value="ORDENES_PAGO_ALL"> Permisos totales </option>
+            </select>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Proveedores </p>
+            <select [(ngModel)]="permisosSecciones.PROVEEDORES"
+              class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="PROVEEDORES_NOT_ACCESS"> Sin acceso </option>
+              <option value="PROVEEDORES_READ"> Solo lectura </option>
+              <option value="PROVEEDORES_ALL"> Permisos totales </option>
+            </select>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Cuentas corrientes - Proveedores </p>
+            <select [(ngModel)]="permisosSecciones.CUENTAS_CORRIENTES_PROVEEDORES"
+              class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="CUENTAS_CORRIENTES_PROVEEDORES_NOT_ACCESS"> Sin acceso </option>
+              <option value="CUENTAS_CORRIENTES_PROVEEDORES_READ"> Solo lectura </option>
+              <option value="CUENTAS_CORRIENTES_PROVEEDORES_ALL"> Permisos totales </option>
+            </select>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- Seccion - Tesoreria -->
+
+      <div class="text-sm mt-2">
+        <div (click)="abrirCerrarSeccion('tesoreria')"
+          class="p-2 cursor-pointer flex items-center justify-between bg-gray-100 border border-gray-400">
+          <p class="font-semibold"> Seccion - Tesoreria </p>
+          <svg *ngIf="muestraSecciones.tesoreria" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+            stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+          </svg>
+          <svg *ngIf="!muestraSecciones.tesoreria" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+            stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+          </svg>
+        </div>
+        <div *ngIf="muestraSecciones.tesoreria">
+          <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Cajas </p>
+            <select [(ngModel)]="permisosSecciones.CAJAS" class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="CAJAS_NOT_ACCESS"> Sin acceso </option>
+              <option value="CAJAS_READ"> Solo lectura </option>
+              <option value="CAJAS_ALL"> Permisos totales </option>
+            </select>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Movimientos internos </p>
+            <select [(ngModel)]="permisosSecciones.MOVIMIENTOS_INTERNOS"
+              class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="MOVIMIENTOS_INTERNOS_NOT_ACCESS"> Sin acceso </option>
+              <option value="MOVIMIENTOS_INTERNOS_READ"> Solo lectura </option>
+              <option value="MOVIMIENTOS_INTERNOS_ALL"> Permisos totales </option>
+            </select>
+          </div>
+          <!-- <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Cheques </p>
+            <select [(ngModel)]="permisosSecciones.CHEQUES" class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="CHEQUES_NOT_ACCESS"> Sin acceso </option>
+              <option value="CHEQUES_READ"> Solo lectura </option>
+              <option value="CHEQUES_ALL"> Permisos totales </option>
+            </select>
+          </div> -->
+          <!-- <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Bancos </p>
+            <select [(ngModel)]="permisosSecciones.BANCOS" class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="BANCOS_NOT_ACCESS"> Sin acceso </option>
+              <option value="BANCOS_READ"> Solo lectura </option>
+              <option value="BANCOS_ALL"> Permisos totales </option>
+            </select>
+          </div> -->
+          <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Gastos </p>
+            <select [(ngModel)]="permisosSecciones.GASTOS" class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="GASTOS_NOT_ACCESS"> Sin acceso </option>
+              <option value="GASTOS_READ"> Solo lectura </option>
+              <option value="GASTOS_ALL"> Permisos totales </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seccion - Configuraciones -->
+
+      <div class="text-sm mt-2">
+        <div (click)="abrirCerrarSeccion('configuraciones')"
+          class="p-2 cursor-pointer flex items-center justify-between bg-gray-100 border border-gray-400">
+          <p class="font-semibold"> Seccion - Configuraciones </p>
+          <svg *ngIf="muestraSecciones.configuraciones" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+          </svg>
+          <svg *ngIf="!muestraSecciones.configuraciones" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+          </svg>
+        </div>
+        <div *ngIf="muestraSecciones.configuraciones">
+          <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Usuarios </p>
+            <select [(ngModel)]="permisosSecciones.USUARIOS" class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="USUARIOS_NOT_ACCESS"> Sin acceso </option>
+              <option value="USUARIOS_READ"> Solo lectura </option>
+              <option value="USUARIOS_ALL"> Permisos totales </option>
+            </select>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Tipos de gastos </p>
+            <select [(ngModel)]="permisosSecciones.TIPOS_GASTOS"
+              class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="TIPOS_GASTOS_NOT_ACCESS"> Sin acceso </option>
+              <option value="TIPOS_GASTOS_READ"> Solo lectura </option>
+              <option value="TIPOS_GASTOS_ALL"> Permisos totales </option>
+            </select>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Unidades de medida </p>
+            <select [(ngModel)]="permisosSecciones.UNIDADES_MEDIDA"
+              class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="UNIDADES_MEDIDA_NOT_ACCESS"> Sin acceso </option>
+              <option value="UNIDADES_MEDIDA_READ"> Solo lectura </option>
+              <option value="UNIDADES_MEDIDA_ALL"> Permisos totales </option>
+            </select>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Familias de productos </p>
+            <select [(ngModel)]="permisosSecciones.FAMILIA_PRODUCTOS"
+              class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="FAMILIA_PRODUCTOS_NOT_ACCESS"> Sin acceso </option>
+              <option value="FAMILIA_PRODUCTOS_READ"> Solo lectura </option>
+              <option value="FAMILIA_PRODUCTOS_ALL"> Permisos totales </option>
+            </select>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-b border-gray-300 pb-4">
+            <p class="font-semibold"> Productos </p>
+            <select [(ngModel)]="permisosSecciones.PRODUCTOS" class="p-2 w-max text-sm border border-gray-400 rounded">
+              <option value="PRODUCTOS_NOT_ACCESS"> Sin acceso </option>
+              <option value="PRODUCTOS_READ"> Solo lectura </option>
+              <option value="PRODUCTOS_ALL"> Permisos totales </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div>
+      <div (click)="abrirCerrarCajas()"
+        class="p-2 cursor-pointer flex items-center mt-2 justify-between bg-gray-100 border border-gray-400">
+        <p class="font-semibold"> Permisos de cajas </p>
+        <svg *ngIf="muestraCajas" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+        </svg>
+        <svg *ngIf="!muestraCajas" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+        </svg>
+      </div>
+      <div *ngIf="muestraCajas" class="p-2 max-h-96 overflow-auto">
+        <div [ngClass]="{'bg-gray-100':cajaPrincipalUsuario && (caja._id === cajaPrincipalUsuario._id)}" class="p-2 border-b-2 flex items-center justify-between" *ngFor="let caja of cajas">
+          <div>
+            <p class="font-semibold"> {{ caja?.descripcion }} </p>
+            <p *ngIf="cajaPrincipalUsuario && (caja._id === cajaPrincipalUsuario._id)" class="py-1 mt-1 px-3 bg-green-800 text-white text-xs rounded-full w-max"> Caja de usuario </p>
+          </div>
+          <div (click)="cajaPrincipalUsuario && (caja._id === cajaPrincipalUsuario._id) ? null : cambiarPermisoCaja(caja._id.toString())"
+            [ngClass]="{'bg-green-100':permisosCajas.includes(caja._id.toString())}"
+            class="p-2 w-10 h-10 flex items-center justify-center cursor-pointer bg-red-100 border border-gray-500 rounded">
+            <svg *ngIf="permisosCajas.includes(caja._id.toString())" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-green-700 font-semibold">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+            <svg *ngIf="!permisosCajas.includes(caja._id.toString())" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-red-700 font-semibold">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

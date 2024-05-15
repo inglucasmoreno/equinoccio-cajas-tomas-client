@@ -1,0 +1,328 @@
+
+<!-- Modal: Importar productos -->
+<app-modal [showModal]="showModalImportarProductos">
+    <div class="bg-primary-800 px-3 py-2 rounded-t flex items-center justify-between">
+        <h1 class="text-white md:text-xl"> Importando productos </h1>
+        <button (click)="showModalImportarProductos = false" class="text-white focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+        </button>
+    </div>
+    <div class="p-2">
+        <p class="text-sm text-gray-500"> <span class="text-red-500"> * </span> El archivo seleccionado debe ser un excel </p>
+        <input [(ngModel)]="file" (change)="capturarArchivo($event)" type="file" class="mt-2 text-sm">
+        <button (click)="importarProductos()" class="bg-green-700 hover:bg-green-600 focus:outline-none text-sm mt-3 text-white p-2 rounded w-full shadow">
+            Importar productos
+        </button>
+    </div>
+</app-modal>
+
+<!-- Modal: Crear / Editar producto -->
+<app-modal [showModal]="showModalProducto">
+  <div>
+
+      <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
+          <h1 class=" text-white px-2 py-1 rounded-t md:text-lg"> {{ estadoFormulario == 'crear' ? 'Creando producto' : 'Editando producto' }} </h1>
+          <svg (click)="showModalProducto = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </div>
+
+      <div class="px-2 max-h-96 overflow-y-auto text-sm">
+
+        <div class="md:flex md:items-center mt-4">
+            <div class="md:w-1/2">
+              <p class="font-semibold"> <span class="text-red-500"> * </span>  Código </p>
+              <input (keyup.enter)="estadoFormulario === 'crear' ? nuevoProducto() : actualizarProducto()" [(ngModel)]="productoForm.codigo" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 24545" type="text">
+            </div>
+            <div class="md:w-1/2 md:ml-4 mt-4 md:mt-0">
+                <div class="w-full">
+                    <p class="font-semibold"> <span class="text-red-500"> * </span> Descripción </p>
+                    <input (keyup.enter)="estadoFormulario === 'crear' ? nuevoProducto() : actualizarProducto()" [(ngModel)]="productoForm.descripcion" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. Madera" type="text">
+                </div>
+            </div>
+        </div>
+
+        <div class="md:flex md:items-center mt-4">
+          <div class="md:w-1/2">
+            <p class="font-semibold"> <span class="text-red-500"> * </span> Unidad de medida </p>
+            <select [(ngModel)]="productoForm.unidad_medida" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor outline-none w-full text-gray-800">
+              <option value=""> Seleccionar unidad </option>
+              <option *ngFor="let unidad of unidades" [value]="unidad._id"> {{ unidad.descripcion }} </option>
+            </select>
+          </div>
+          <div class="md:w-1/2 md:ml-4 mt-4 md:mt-0">
+            <p class="font-semibold"> <span class="text-red-500"> * </span> Familia </p>
+            <select [(ngModel)]="productoForm.familia" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor outline-none w-full text-gray-800">
+                <option value=""> Seleccionar familia </option>
+                <option *ngFor="let familia of familias" [value]="familia._id"> {{ familia.descripcion }} </option>
+            </select>
+            <!-- <div class="w-full">
+                <p class="font-semibold"> Cantidad </p>
+                <input (keyup.enter)="estadoFormulario === 'crear' ? nuevoProducto() : actualizarProducto()" min="0" [(ngModel)]="productoForm.cantidad" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 100" type="number">
+            </div> -->
+          </div>
+        </div>
+
+        <!-- <div class="md:flex md:items-center mt-4">
+            <div class="md:w-1/2">
+                <p class="font-semibold"> <span class="text-red-500"> * </span> Alerta de stock mínimo </p>
+                <select [(ngModel)]="productoForm.stock_minimo_alerta" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor outline-none w-full text-gray-800">
+                    <option value="false"> Sin alerta </option>
+                    <option value="true"> Con alerta </option>
+                </select>
+            </div>
+            <div class="md:w-1/2 md:ml-4 mt-4 md:mt-0">
+              <div class="w-full">
+                  <p class="font-semibold"> <span class="text-red-500"> * </span> Cantidad minima </p>
+                  <div *ngIf="productoForm.stock_minimo_alerta === 'false'" class="py-2 mt-1 border border-gray-400 bg-gray-100 px-2 appearance-none outline-none w-full text-gray-800"> Sin alerta por stock minimo </div>
+                  <input *ngIf="productoForm.stock_minimo_alerta === 'true'" (keyup.enter)="estadoFormulario === 'crear' ? nuevoProducto() : actualizarProducto()" min="0" [(ngModel)]="productoForm.cantidad_minima" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 5" type="number">
+              </div>
+            </div>
+        </div> -->
+
+        <!-- <div class="md:flex md:items-center mt-4">
+          <div class="md:w-1/2">
+            <p class="font-semibold"> <span class="text-red-500"> * </span> Familia </p>
+            <select [(ngModel)]="productoForm.familia" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor outline-none w-full text-gray-800">
+                <option value=""> Seleccionar familia </option>
+                <option *ngFor="let familia of familias" [value]="familia._id"> {{ familia.descripcion }} </option>
+            </select>
+          </div>
+          <div class="md:w-1/2 md:ml-4 mt-4 md:mt-0">
+            <p class="font-semibold"> Precio </p>
+            <input (keyup.enter)="estadoFormulario === 'crear' ? nuevoProducto() : actualizarProducto()" min="0" [(ngModel)]="productoForm.precio" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 1800" type="number">
+          </div>
+        </div> -->
+        <div *ngIf="productoSeleccionado && estadoFormulario === 'editar'" class="xl:flex items-center mt-4">
+          <div class="xl:w-1/2">
+              <p class="font-semibold text-sm"> Fecha de alta </p>
+              <div class="border text-sm mt-2 border-gray-400 rounded p-2 bg-gray-100">
+                  {{ productoSeleccionado.createdAt | fecha }}
+              </div>
+          </div>
+          <div class="xl:ml-4 xl:w-1/2 mt-4 xl:mt-0">
+              <p class="font-semibold text-sm"> Usuario creador </p>
+              <div class="border text-sm capitalize mt-2 border-gray-400 rounded p-2 bg-gray-100">
+                  {{ productoSeleccionado.creatorUser.apellido.toLowerCase() }} {{ productoSeleccionado.creatorUser.nombre.toLowerCase() }}
+              </div>
+          </div>
+        </div>
+        <div *ngIf="productoSeleccionado && estadoFormulario === 'editar'" class="xl:flex items-center mt-4">
+            <div class="xl:w-1/2">
+                <p class="font-semibold text-sm"> Ultima actualización </p>
+                <div class="border text-sm mt-2 border-gray-400 rounded p-2 bg-gray-100">
+                    {{ productoSeleccionado.updatedAt | fecha }}
+                </div>
+            </div>
+            <div class="xl:ml-4 xl:w-1/2 mt-4 xl:mt-0">
+                <p class="font-semibold text-sm"> Usuario ultima actualización </p>
+                <div class="border text-sm capitalize mt-2 border-gray-400 rounded p-2 bg-gray-100">
+                    {{ productoSeleccionado.updatorUser.apellido.toLowerCase() }} {{ productoSeleccionado.updatorUser.nombre.toLowerCase() }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="px-2 pb-2">
+        <button *ngIf="estadoFormulario == 'crear'" (click)="nuevoProducto()" class="bg-green-700 focus:outline-none shadow text-white w-full border border-green-700 hover:bg-green-600 p-2 text-sm rounded mt-4"> Crear producto </button>
+        <button *ngIf="estadoFormulario == 'editar'" (click)="actualizarProducto()" class="bg-green-700 focus:outline-none shadow text-white w-full border border-green-700 hover:bg-green-600 p-2 text-sm rounded mt-4"> Actualizar producto </button>
+    </div>
+  </div>
+</app-modal>
+
+<!-- Listado de productos -->
+<div class="mx-auto">
+    <app-tarjeta-lista>
+      <div class="container mx-auto">
+          <div>
+              <div class="flex items-center justify-between bg-primary-800 px-4 py-3 rounded-t">
+                  <div class="ml-2 text-white">
+                      <h2 class="text-xl md:text-2xl leading-tight">
+                          Listado de productos
+                      </h2>
+                      <p> Total de productos: {{ totalItems }} </p>
+                  </div>
+                  <div *ngIf="permisos.all">
+                    <!-- <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" title="Importar productos" (click)="abrirImportarProductos()" class="p-2 border mr-3 focus:outline-none hover:text-secondaryColor border-gray-300 bg-white rounded shadow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                          </svg>
+                    </button> -->
+                    <button title="Nuevo producto" (click)="abrirModal('crear')" class="p-2 border mr-3 focus:outline-none hover:text-secondaryColor border-gray-300 bg-white rounded shadow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                          </svg>
+                    </button>
+                  </div>
+              </div>
+              <div class="md:flex md:items-center md:justify-between px-4 py-2">
+                  <div class="my-2 flex sm:flex-row flex-col">
+                      <div class="flex flex-row mb-1 sm:mb-0">
+                          <div class="relative">
+                              <select [(ngModel)]="filtro.activo" (change)="cambiarPagina(1)" class="h-full text-sm rounded-r border-t border-l rounded-l sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
+                                  <option value='true'> Activos </option>
+                                  <option value='false'> Inactivos </option>
+                                  <option value=''> Todos </option>
+                              </select>
+                              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                  <svg class="fill-current h-4 w-4" viewBox="0 0 20 20">
+                                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                                  </svg>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="block relative">
+                          <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
+                              <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current text-gray-500 cursor-pointer hover:text-secondary-500">
+                                  <path
+                                      d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z">
+                                  </path>
+                              </svg>
+                          </span>
+                          <input placeholder="Buscar" (change)="cambiarPagina(1)" [(ngModel)]="filtro.parametro" class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
+                          />
+                      </div>
+                      <div class="flex items-center">
+                          <select (change)="cambiarCantidadItems()" class="bg-white text-sm focus:outline-none w-max px-2 py-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
+                              <option value="10"> 10 elementos </option>
+                              <option value="20"> 20 elementos </option>
+                              <option value="50"> 50 elementos </option>
+                              <option value="100"> 100 elementos </option>
+                          </select>
+                          <!-- <button title="Solo productos con alerta de stock" [ngClass]="{'bg-red-50 border-red-400 text-red-700' : filtro.alerta_stock }" (click)="alertaStockMinimo()" class="border mt-2 md:mt-0 hover:text-red-700 border-gray-400 w-max focus:outline-none shadow p-2 rounded ml-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
+                              </svg>
+                          </button>
+                          <button title="Solo productos con cantidad negativa" [ngClass]="{'bg-red-50 border-red-400 text-red-700' : filtro.alerta_cantidad_negativa }" (click)="alertaCantidadNegativa()" class="border mt-2 md:mt-0 hover:text-red-700 border-gray-400 w-max focus:outline-none shadow p-2 rounded ml-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                              </svg>
+                          </button> -->
+                      </div>
+                  </div>
+              </div>
+              <div class="px-4 py-2 overflow-x-auto">
+                  <div class="inline-block max-h-96 overflow-y-auto min-w-full pb-5">
+                      <table class="min-w-full leading-normal">
+                          <thead>
+                              <tr class="border">
+                                    <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('codigo')" class="cursor-pointer flex items-center focus:outline-none">
+                                        <span> Código </span>
+                                        <span class="ml-2 text-gray-600">
+                                            <svg *ngIf="ordenar.columna == 'codigo' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna == 'codigo' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'codigo'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        </span>
+                                    </div>
+                                    </th>
+                                    <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('familia')" class="cursor-pointer flex items-center focus:outline-none">
+                                        <span> Familia </span>
+                                        <span class="ml-2 text-gray-600">
+                                            <svg *ngIf="ordenar.columna == 'familia' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna == 'familia' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'familia'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        </span>
+                                    </div>
+                                  </th>
+                                  <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                                      <div (click)="ordenarPorColumna('descripcion')" class="cursor-pointer flex items-center focus:outline-none">
+                                          <span> Descripción </span>
+                                          <span class="ml-2 text-gray-600">
+                                              <svg *ngIf="ordenar.columna == 'descripcion' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                              <svg *ngIf="ordenar.columna == 'descripcion' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                              <svg *ngIf="ordenar.columna != 'descripcion'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                          </span>
+                                      </div>
+                                  </th>
+                                  <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('unidad_medida.descripcion')" class="cursor-pointer w-max flex items-center focus:outline-none">
+                                        <span> Unidad de medida </span>
+                                        <span class="ml-2 text-gray-600">
+                                            <svg *ngIf="ordenar.columna == 'unidad_medida.descripcion' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna == 'unidad_medida.descripcion' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'unidad_medida.descripcion'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        </span>
+                                    </div>
+                                  </th>
+                                  <!-- <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('cantidad')" class="cursor-pointer flex items-center focus:outline-none">
+                                        <span> Cantidad </span>
+                                        <span class="ml-2 text-gray-600">
+                                            <svg *ngIf="ordenar.columna == 'cantidad' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna == 'cantidad' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'cantidad'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        </span>
+                                    </div>
+                                  </th> -->
+                                  <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
+                                      <div (click)="ordenarPorColumna('activo')" class="cursor-pointer flex items-center focus:outline-none">
+                                          <span>
+                                              Estado
+                                          </span>
+                                          <span class="ml-2">
+                                              <svg *ngIf="ordenar.columna == 'activo' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                              <svg *ngIf="ordenar.columna == 'activo' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                              <svg *ngIf="ordenar.columna != 'activo'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                          </span>
+                                      </div>
+                                  </th>
+                                  <th *ngIf="permisos.all" class="px-5 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
+                                      Acción
+                                  </th>
+                              </tr>
+                          </thead>
+                          <tbody *ngIf="productos">
+                              <tr [ngClass]="{ 'bg-red-50':producto.stock_minimo_alerta && producto.cantidad <= producto.cantidad_minima }" class="animate__animated animate__fadeIn" *ngFor="let producto of productos | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems}">
+                                  <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 whitespace-no-wrap">
+                                        {{ producto.codigo.trim() === '' ? 'Sin código' : producto.codigo }}
+                                    </p>
+                                  </td>
+                                  <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 whitespace-no-wrap">
+                                        {{ producto.familia.descripcion }}
+                                    </p>
+                                  </td>
+                                  <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                      <p class="text-gray-900 whitespace-no-wrap">
+                                          {{ producto.descripcion }}
+                                      </p>
+                                  </td>
+                                  <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 whitespace-no-wrap w-max">
+                                        {{ producto.unidad_medida.descripcion }}
+                                    </p>
+                                  </td>
+                                  <!-- <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 whitespace-no-wrap w-max">
+                                        {{ producto.cantidad | moneda }}
+                                    </p>
+                                  </td> -->
+                                  <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                      <app-pastilla-estado [activo]=producto.activo (click)="actualizarEstado(producto)"></app-pastilla-estado>
+                                  </td>
+                                  <td *ngIf="permisos.all" class="px-5 py-2 border-b border-gray-200 text-xs text-center">
+                                      <p class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
+                                          <app-boton-tabla (click)="abrirModal('editar', producto)" title="Editar producto">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                                              </svg>
+                                          </app-boton-tabla>
+                                      </p>
+                                  </td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+          <div class="px-5 py-5 text-sm mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
+              <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="cambiarPagina($event)"></pagination-controls>
+          </div>
+      </div>
+    </app-tarjeta-lista>
+</div>
+
+

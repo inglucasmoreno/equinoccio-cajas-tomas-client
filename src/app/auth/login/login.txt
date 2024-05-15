@@ -1,0 +1,22 @@
+<div>
+    <img class="gsap-fondo fixed hidden lg:block inset-0 h-full"  src="assets/img/login/wave.png">
+    <div class="w-screen h-screen flex flex-col justify-center items-center lg:grid lg:grid-cols-2">
+        <!-- <img class="hidden gsap-imagen lg:block w-1/2 transform mx-auto" src="assets/img/login/unlock.svg"> -->
+        <div class="hidden gsap-imagen lg:block w-1/2 transform mx-auto"></div>
+        <form autocomplete="off" [formGroup]="loginForm" (submit)="login()" class="gsap-formulario flex flex-col justify-center items-center w-1/2">
+            <!-- <img class="w-32" src="assets/img/login/avatar.svg"> -->
+            <img class="w-28" src="assets/img/login/Logo.png" alt="Logo">
+            <h2 class="mt-2 font-display font-bold text-xl md:text-3xl text-primary-900 text-center"> Ingreso al sistema </h2>
+            <p class="font-semibold text-primary-900"> Versión 1.3.1 </p>
+            <div class="relative mt-8">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user absolute text-primary-800"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <input type="text" formControlName="username" class="transition-all duration-500 pl-8 border-b-2 border-primary-700 font-display outline-none focus:outline-none focus:border-secondaryColor text-lg" placeholder="Usuario" />
+            </div>
+            <div class="relative mt-8">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock absolute text-primary-800"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <input type="password" formControlName="password" class="transition-all duration-500 pl-8 border-b-2 border-primary-700 font-display outline-none focus:outline-none focus:border-secondaryColor text-lg" placeholder="Contraseña" />
+            </div>
+            <button class="py-3 px-20 bg-primary-800 rounded-full text-white font-bold uppercase text-lg mt-8 transform hover:translate-y-1 hover:bg-secondaryColor transition-all duration-500"> Ingresar </button>
+        </form>
+    </div>
+</div>

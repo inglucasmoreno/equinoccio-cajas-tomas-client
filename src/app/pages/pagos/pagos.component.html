@@ -1,0 +1,416 @@
+<!-- Modal: Reportes -->
+<app-modal [showModal]="showModalReportesOrdenes">
+  <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
+    <h1 class=" text-white px-2 py-1 rounded-t"> Generando reporte </h1>
+    <svg (click)="showModalReportesOrdenes = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  </div>
+  <div class="p-2 text-sm">
+    <div class="flex items-center">
+      <div class="text-center w-1/2">
+        <p class="font-semibold"> Desde </p>
+        <input [(ngModel)]="reportes.fechaDesde" class="p-2 border mt-1 w-full focus:outline-none border-gray-400" type="date">
+      </div>
+      <div class="text-center w-1/2 ml-2">
+        <p class="font-semibold"> Hasta </p>
+        <input [(ngModel)]="reportes.fechaHasta" class="p-2 border mt-1 w-full focus:outline-none border-gray-400" type="date">
+      </div>
+    </div>
+    <button (click)="reporteExcel()" class="border bg-secondaryColor w-full p-2 rounded focus:outline-none text-white mt-3"> Generar reporte </button>   
+  </div>
+</app-modal>
+
+<!-- Detalles de compra -->
+<app-modal [showModal]="showModalDetallesCompra">
+  
+  <div class="bg-primary-900 text-white flex items-center justify-between p-2 rounded-t">
+    <h1> Detalles de la compra </h1>
+    <button (click)="cerrarDetallesCompra()" class="text-white focus:outline-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+  
+  <div class="p-2 max-h-96 overflow-y-auto text-sm">
+    <div class="w-full flex items-center justify-between">
+      <p> <span class="font-semibold"> Código de compra: </span> {{ compra?.nro | codigoCompras }} </p>
+      <p> <span class="font-semibold"> Fecha de compra: </span>  {{ compra?.fecha_compra ? (compra?.fecha_compra | fecha) : (compra?.createdAt | fecha) }} </p>
+    </div>
+    <p class="mt-2"> <span class="font-semibold"> Número de factura: </span> {{ compra?.nro_factura }} </p>
+    <p class="mt-2"> <span class="font-semibold"> Precio total: </span>  ${{ compra?.precio_total | moneda }} </p>
+    <p class="mt-2"> <span class="font-semibold"> Proveedor: </span> {{ compra?.proveedor.descripcion }} </p>
+    <p class="mt-2"> <span class="font-semibold"> Estado: </span> <span [ngClass]="{'bg-green-100 text-green-800 border-green-400':compra?.cancelada, 'bg-red-100 text-red-800 border-red-400' : !compra?.cancelada}" class="p-1 border rounded text-xs font-semibold"> {{ compra?.cancelada ? 'Completada' : 'Sin cancelar'}} </span> </p>
+    <div class="mt-2 border-t">
+      <div class="mt-2">
+        <p class="font-semibold"> Observacion personalizada </p>
+        <div class="flex items-center">
+            <div [ngClass]="{'text-gray-500':compra?.observacion.trim() === ''}" class="border mt-1 focus:outline-none border-gray-400 p-2 rounded w-full">
+                {{ compra?.observacion.trim() === '' ? 'Sin observación' : compra?.observacion }}
+            </div>
+        </div>
+      </div>
+      <div class="mt-2">
+        <p class="font-semibold p-1 border-t"> Formas de pago </p>
+        <div>
+          <p class="p-1 flex items-center justify-between" *ngFor="let forma of compra?.formas_pago">
+            <span>
+              {{ forma.descripcion }}
+            </span>
+            <span class="font-semibold">
+              ${{ forma.monto | moneda }}
+            </span>
+          </p>
+        </div>
+        <div>
+          <p class="p-1 flex items-center justify-between" *ngFor="let relacion of compra_cheques">
+            <span class="flex items-center">
+              CHEQUE - #{{ relacion.cheque.nro_cheque }}
+              <button (click)="abrirDetallesCheque(relacion.cheque, 'compra')" class="hover:text-secondaryColor focus:outline-none cursor-pointer ml-1" title="Detalles de cheque">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                </svg>
+              </button>
+            </span>
+            <span class="font-semibold">
+              ${{ relacion.cheque.importe | moneda }}
+            </span>
+          </p>
+        </div>
+        <p class="p-1 mt-1 font-semibold border border-gray-300 bg-gray-50 flex items-center justify-between"> <span> Pago total </span> <span> ${{ compra?.monto_pago | moneda }} </span> </p>
+        <p *ngIf="!compra?.cancelada" class="p-1 mt-2 font-semibold text-red-700 border border-red-300 bg-red-50 flex items-center justify-between"> <span> Monto sin cancelar </span> <span> ${{ compra?.monto_deuda | moneda }} </span> </p>
+        <p *ngIf="compra?.monto_pago > compra?.precio_total" class="p-1 mt-2 font-semibold text-green-700 border border-green-300 bg-green-50 flex items-center justify-between"> <span> A favor </span> <span> ${{ (compra?.monto_pago - compra?.precio_total) | moneda }} </span> </p>
+      </div>
+    </div>
+
+    <div *ngIf="ordenesPago?.length > 0" class="pt-2 mt-3 border-t">
+      <div>
+        <h2 class="font-semibold"> Ordenes de pago </h2>
+        <div class="flex flex-wrap items-center">
+          <p class="p-2 border-l-8 border-gray-400 w-max mr-2 hover:border-secondaryColor hover:text-secondaryColor cursor-pointer border mt-2" *ngFor="let relacion of ordenesPago"> 
+            <span>
+              {{ relacion?.orden_pago.nro | codigoOrdenesPago }} 
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-2 mt-3 border-t">
+      <h2 class="font-semibold"> Listado de productos </h2>
+      <div class="flex items-center">
+        <input [(ngModel)]="filtro.parametroProducto" type="text" class="p-2 my-2 border focus:outline-none text-sm border-gray-400 rounded" placeholder="Buscar">
+        <button title="Imprimir compra" (click)="generarPDF(compra)" class="border bg-gray-100 border-gray-400 hover:text-secondaryColor focus:outline-none ml-2 rounded p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+          </button>
+      </div>
+
+      <div class="max-h-64 overflow-y-auto">
+        <div class="text-sm border border-gray-400 mt-2 p-2" *ngFor="let producto of productos | filtroProductosCompra:filtro.parametroProducto:''">
+          <h1 class="font-semibold"> {{ producto.producto.descripcion }} </h1>
+          <p class="text-xs text-gray-500"> <span> ${{ producto.precio_unitario | moneda }} </span> x {{ producto.producto.unidad_medida.descripcion }} </p>
+          <p class="text-xs"> Cantidad: {{ producto.cantidad }} </p>
+          <p class="text-xs font-semibold"> Precio: ${{ producto.precio_total | moneda }} </p>
+        </div>
+      </div>
+  </div>
+  
+  </div>
+</app-modal>
+
+<!-- Detalles de cheque -->
+<app-modal [showModal]="showModalDetallesCheque">
+  <div>
+
+    <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
+        <h1 class=" text-white px-2 py-1 rounded-t md:text-lg"> Detalles de cheque </h1>
+        <svg (click)="cerrarDetallesCheque()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </div>
+    
+    <div class="p-4 max-h-96 overflow-y-auto text-sm">
+      <div class="md:flex md:items-center">
+          <div class="md:w-1/2">
+              <p class="font-semibold"> <span class="text-red-500"> * </span> Nro de cheque </p>
+              <div class="p-2 mt-1 border rounded bg-gray-50 border-gray-400 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
+                {{ chequeSeleccionado?.nro_cheque }}
+              </div>
+          </div>
+          <div class="md:w-1/2 md:ml-4 mt-2 md:mt-0">
+              <p class="font-semibold"> <span class="text-red-500"> * </span> Importe </p>
+              <div class="p-2 mt-1 bg-gray-50 border rounded border-gray-400 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
+                ${{ chequeSeleccionado?.importe | moneda }}
+              </div>
+          </div>
+      </div>
+      <div class="mt-4">
+          <p class="font-semibold"> <span class="text-red-500"> * </span> Emisor </p>
+          <div class="p-2 mt-1 border bg-gray-50 border-gray-400 rounded tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
+            {{ chequeSeleccionado?.emisor }}
+          </div>
+      </div>
+      <div class="md:flex md:items-center mt-4">
+          <div class="md:w-1/2">
+              <p class="font-semibold"> <span class="text-red-500"> * </span> Banco </p>
+              <div class="p-2 mt-1 bg-gray-50 border border-gray-400 rounded tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
+                {{ chequeSeleccionado?.banco.descripcion }}
+              </div>
+          </div>
+          <div class="md:w-1/2 md:ml-4 mt-4 md:mt-0">
+              <p class="font-semibold"> <span class="text-red-500"> * </span> Fecha de cobro </p>
+              <div class="p-2 mt-1 bg-gray-50 border border-gray-400 rounded tranform duration-500 x1focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
+                {{ chequeSeleccionado?.fecha_cobro | fecha }}
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</app-modal>
+
+<!-- Detalles de orden de pago -->
+<app-modal [showModal]="showModalOrdenPago">
+  <div class="text-sm">
+    <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
+      <h1 class=" text-white px-2 py-1 rounded-t md:text-lg"> Detalles de pago </h1>
+      <svg (click)="showModalOrdenPago = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </div>
+    <div class="p-2 max-h-96 overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <p> <span class="font-semibold"> Código de pago: </span> {{ ordenPagoSeleccionada?.nro | codigoOrdenesPago }} </p>
+        <p> <span class="font-semibold"> Fecha: </span> {{ ordenPagoSeleccionada?.fecha_pago ? (ordenPagoSeleccionada?.fecha_pago | fecha) : (ordenPagoSeleccionada?.createdAt | fecha) }} </p>    
+      </div>
+      <div class="mt-2">
+        <p> <span class="font-semibold"> Proveedor: </span> {{ ordenPagoSeleccionada?.proveedor.descripcion }} </p>
+      </div>  
+      <div *ngIf="relaciones_compras && relaciones_compras.length > 0" class="mt-2">
+        <h2 class="p-1 bg-gray-100 font-semibold rounded w-full border border-gray-300"> Facturas pagadas </h2>
+        <div (click)="abrirDetallesCompra(compra.compra._id)" title="Detalles de compra" class="flex cursor-pointer hover:bg-secondaryColor hover:text-white p-2 items-center justify-between border-b border-gray-300 pb-2" *ngFor="let compra of relaciones_compras">
+          <div> 
+            <p> {{ compra.compra.nro | codigoCompras }} </p>
+            <p [ngClass]="{'bg-green-100 border-green-300 text-green-700':compra.compra_cancelada, 'bg-blue-100 border-blue-300 text-blue-700': !compra.compra_cancelada}" class="border font-semibold mt-1 text-xs p-1 rounded"> {{ compra.compra_cancelada ? 'Factura cancelada' : 'Pago parcial'}} </p>
+          </div>
+          <p class="font-semibold"> ${{ compra.monto_pagado | moneda }} </p>
+        </div>
+        <div class="p-2 flex items-center justify-between">
+          <p class="font-semibold"> TOTAL FACTURAS </p>
+          <p class="font-semibold"> ${{ totalEnCompras | moneda }} </p>
+        </div>
+      </div>
+      <div *ngIf="!relaciones_compras || relaciones_compras.length === 0" class="my-4">
+        <span class="p-2 bg-green-100 text-green-700 border text-xs border-green-300 font-semibold rounded">
+          ANTICIPO
+        </span>
+      </div>
+      <div class="mt-2">
+        <h2 class="p-1 bg-gray-100 font-semibold rounded w-full border border-gray-300"> Formas de pago </h2>
+        <div>
+          <div class="flex p-2 items-center justify-between border-b border-gray-300" *ngFor="let forma_pago of ordenPagoSeleccionada?.formas_pago">
+            <p> {{ forma_pago.descripcion }} </p>
+            <p class="font-semibold"> ${{ forma_pago.monto | moneda }} </p>
+          </div>
+          <div class="flex items-center justify-between border-b border-gray-300 pb-1" *ngFor="let relacion of relaciones_cheques">
+            <p class="flex p-2 items-center">  
+              <span>
+                CHEQUE -
+              </span>
+              <span class="ml-1"> 
+                #{{ relacion.cheque.nro_cheque }} 
+              </span> 
+              <button (click)="abrirDetallesCheque(relacion.cheque, 'pago')" class="hover:text-secondaryColor ml-1 focus:outline-none cursor-pointer" title="Detalles de cheque">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                </svg>               
+              </button> 
+            </p>
+            <p class="font-semibold pr-2"> ${{ relacion.cheque.importe | moneda }} </p>
+          </div>
+          <div class="p-2 flex items-center justify-between">
+            <p class="font-semibold"> TOTAL PAGADO </p>
+            <p class="font-semibold"> ${{ ordenPagoSeleccionada?.pago_total | moneda }} </p>
+          </div>
+          <div class="px-2">
+            <p *ngIf="(ordenPagoSeleccionada?.pago_total - totalEnCompras > 0) && relaciones_compras.length > 0" class="p-2 font-semibold rounded outline-none bg-green-100 text-green-800 border border-green-300 flex items-center justify-between">
+              <span> ANTICIPO </span>
+              <span> ${{ ordenPagoSeleccionada?.pago_total - totalEnCompras | moneda }} </span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> 
+</app-modal>
+
+<!-- Listado de ordenes de pago -->
+<div class="md:max-w-7xl mx-auto">
+  <app-tarjeta-lista>
+    <div class="container mx-auto">
+        <div>
+            <div class="flex items-center justify-between bg-primary-800 px-4 py-3 rounded-t">
+                <div class="ml-2 text-white">
+                    <h2 class="text-xl md:text-2xl leading-tight">
+                        Ordenes de pago
+                    </h2>
+                    <p> Total de pagos: {{ totalItems }} </p>
+                </div>
+                <div>
+                  <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" title="Generar reporte" (click)="abrirReportes()" class="p-2 border mr-3 focus:outline-none hover:text-secondaryColor border-gray-300 bg-white rounded shadow">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                    </svg>                      
+                  </button>
+                  <button *ngIf="permisos.all" title="Nuevo pago" routerLink="/dashboard/nuevo-pago" class="p-2 border mr-3 focus:outline-none hover:text-secondaryColor border-gray-300 bg-white rounded shadow">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>                    
+                  </button>
+                </div>
+            </div>
+            <div class="md:flex md:items-center md:justify-between px-4 py-2">
+                <div class="my-2 flex sm:flex-row flex-col">
+                    <div class="flex flex-row mb-1 sm:mb-0">
+                    </div>
+                    <div class="block relative">
+                        <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
+                            <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current text-gray-500 cursor-pointer hover:text-secondary-500">
+                                <path
+                                    d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z">
+                                </path>
+                            </svg>
+                        </span>
+                        <input placeholder="Buscar" (change)="cambiarPagina(1)" [(ngModel)]="filtro.parametro" class="appearance-none rounded-r rounded-l border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
+                        />
+                    </div>
+                    <select (change)="cambiarCantidadItems()" class="bg-white text-sm focus:outline-none w-max px-2 py-2 md:py-0 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
+                        <option value="10"> 10 elementos </option>
+                        <option value="20"> 20 elementos </option>
+                        <option value="50"> 50 elementos </option>
+                        <option value="100"> 100 elementos </option>
+                    </select>
+                </div>
+            </div>
+            <div class="px-4 py-2 overflow-x-auto">
+                <div class="inline-block max-h-96 overflow-y-auto min-w-full pb-5">
+                    <table class="min-w-full leading-normal">
+                        <thead>
+                            <tr class="border">
+                                <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
+                                  Acción
+                                </th>
+                                <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('nro')" class="cursor-pointer flex items-center focus:outline-none">
+                                        <span> Código </span>
+                                        <span class="ml-2 text-gray-600">    
+                                            <svg *ngIf="ordenar.columna == 'nro' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                            <svg *ngIf="ordenar.columna == 'nro' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'nro'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
+                                  <div (click)="ordenarPorColumna('fecha_pago')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
+                                      <span>
+                                          Fecha de pago                                               
+                                      </span>
+                                      <span class="ml-2">
+                                          <svg *ngIf="ordenar.columna == 'fecha_pago' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                          <svg *ngIf="ordenar.columna == 'fecha_pago' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                          <svg *ngIf="ordenar.columna != 'fecha_pago'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                      </span>
+                                  </div>
+                              </th>
+                                <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('createdAt')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
+                                        <span>
+                                            Fecha de carga                                               
+                                        </span>
+                                        <span class="ml-2">
+                                            <svg *ngIf="ordenar.columna == 'createdAt' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                            <svg *ngIf="ordenar.columna == 'createdAt' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'createdAt'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
+                                  <div (click)="ordenarPorColumna('proveedor.descripcion')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
+                                      <span>
+                                          Proveedor                                               
+                                      </span>
+                                      <span class="ml-2">
+                                          <svg *ngIf="ordenar.columna == 'proveedor.descripcion' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                          <svg *ngIf="ordenar.columna == 'proveedor.descripcion' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                          <svg *ngIf="ordenar.columna != 'proveedor.descripcion'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                      </span>
+                                  </div>
+                                </th>
+                                <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
+                                  <div (click)="ordenarPorColumna('pago_total')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
+                                      <span>
+                                          Pago total                                              
+                                      </span>
+                                      <span class="ml-2">
+                                          <svg *ngIf="ordenar.columna == 'pago_total' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                          <svg *ngIf="ordenar.columna == 'pago_total' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                          <svg *ngIf="ordenar.columna != 'pago_total'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                      </span>
+                                  </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="ordenes_pago">
+                            <tr class="animate__animated animate__fadeIn" *ngFor="let orden_pago of ordenes_pago | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems}">
+                                <td class="px-5 py-2 border-b border-gray-200 text-xs text-center">
+                                <span class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
+                                    <app-boton-tabla (click)="abrirDetallesOrdenPago(orden_pago)" title="Detalle orden de pago">
+                                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+                                      </svg>                                      
+                                    </app-boton-tabla>
+                                    <app-boton-tabla (click)="generarPDF(orden_pago)" class="ml-2" title="Generar PDF">
+                                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" />
+                                      </svg>                                      
+                                    </app-boton-tabla>
+                                </span>
+                                </td>  
+                                <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 w-max whitespace-no-wrap">
+                                        {{ orden_pago.nro | codigoOrdenesPago }}
+                                    </p>
+                                </td>
+                                <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                  <p class="text-gray-900 whitespace-no-wrap">
+                                      {{ orden_pago.fecha_pago ? (orden_pago.fecha_pago | fecha) : (orden_pago.createdAt | fecha) }}
+                                  </p>
+                                </td>
+                                <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 whitespace-no-wrap">
+                                        {{ orden_pago.createdAt | fecha }}
+                                    </p>
+                                </td>
+                                <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                  <p class="text-gray-900 whitespace-no-wrap">
+                                      {{ orden_pago.proveedor.descripcion }}
+                                  </p>
+                                </td>
+                                <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                  <p class="text-gray-900 whitespace-no-wrap">
+                                      ${{ orden_pago.pago_total | moneda }}
+                                  </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="px-5 py-5 text-sm mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
+          <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="cambiarPagina($event)"></pagination-controls>
+      </div>
+    </div>
+  </app-tarjeta-lista>
+</div>
+
+
+
+
+

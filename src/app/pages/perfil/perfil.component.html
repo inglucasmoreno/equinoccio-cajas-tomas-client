@@ -1,0 +1,65 @@
+<div class="p-4 gsap-contenido w-full max-w-5xl mx-auto md:flex">
+    <div class="border border-gray-200 w-full md:w-1/2 shadow rounded">
+
+        <h1 class="text-xl md:text-2xl p-2 bg-primary-800 text-white text-center rounded-t"> Datos de usuario </h1>
+
+        <div *ngIf="usuarioLogin" class="p-4">
+
+            <!-- Avatar -->
+            <div class="mt-3 text-center">
+                
+                <div *ngIf="usuarioLogin.role === 'ADMIN_ROLE'" class="bg-blue-100 mr-auto ml-auto rounded-full flex items-center justify-center w-24 h-24 shadow border border-blue-200">
+                    <p class="text-4xl font-semibold text-blue-900"> A </p>
+                </div>
+                
+                <div *ngIf="usuarioLogin.role === 'USER_ROLE'" class="bg-orange-100 mr-auto ml-auto flex items-center justify-center w-24 h-24 rounded-full shadow border border-orange-200">
+                    <p class="text-4xl font-semibold text-orange-500"> Up </p>
+                </div>
+                
+                <div *ngIf="usuarioLogin.role === 'EMPLOYEE_ROLE'" class="bg-purple-100 mr-auto ml-auto flex items-center justify-center w-24 h-24 rounded-full shadow border border-purple-200">
+                    <p class="text-4xl font-semibold text-purple-500"> Ue </p>
+                </div>
+
+                <p class="mt-1 text-sm text-blue-800" *ngIf="usuarioLogin.role === 'ADMIN_ROLE'"> Usuario administrador </p>
+                <p class="mt-1 text-sm text-orange-800" *ngIf="usuarioLogin.role === 'USER_ROLE'"> Usuario personalizado </p>
+                <p class="mt-1 text-sm text-purple-800" *ngIf="usuarioLogin.role === 'EMPLOYEE_ROLE'"> Usuario estandar </p>
+                
+            </div>
+
+            <!-- Datos de usuario -->
+            <div class="w-full mt-2">
+                <div class="p-2 text-center">
+                    <p class="font-semibold text-xl"> Apellido y Nombre </p>
+                    <p class="capitalize text-gray-500"> {{ usuarioLogin.apellido.toLowerCase() }} {{ usuarioLogin.nombre.toLowerCase() }} </p>
+                </div>
+                <div class="p-2 text-center mt-1">
+                    <p class="font-semibold text-xl"> DNI </p>
+                    <p class="text-gray-500"> {{ usuarioLogin.dni }} </p>
+                </div>
+                <div class="p-2 text-center mt-1">
+                    <p class="font-semibold text-xl"> Correo electrónico </p>
+                    <p class="text-gray-500"> {{ usuarioLogin.email }} </p>
+                </div>
+                <div class="p-2 text-center mt-1">
+                    <p class="font-semibold text-xl"> Fecha de ingreso </p>
+                    <p class="text-gray-500"> {{ usuarioLogin.createdAt | fecha }} </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="w-full mt-2 md:mt-0 md:w-1/2 md:ml-2 border shadow rounded h-full">
+        <h1 class="bg-primary-800 text-white text-center text-xl rounded-t p-2"> Actualizar contraseña </h1>
+        <form [formGroup]="passwordForm" (submit)="actualizarPassword()" class="p-2">
+            <div>
+                <p class="font-semibold ml-2"> Nueva contraseña </p>
+                <input formControlName="password" type="password" placeholder="Ingresar contraseña" class="p-2 border-b-2 transform outline-none duration-500 focus:border-secondaryColor focus:outline-none w-full">
+            </div>
+            <div class="mt-2 mb-2">
+                <p class="font-semibold ml-2"> Repetir contraseña </p>
+                <input formControlName="repetir" type="password" placeholder="Repite la contraseña" class="p-2 border-b-2 transform outline-none duration-500 focus:border-secondaryColor focus:outline-none w-full">
+            </div>
+            <app-boton-formulario [deshabilitado]="!passwordForm.valid || (passwordForm.value.password.trim() !== passwordForm.value.repetir.trim())" texto="Actualizar contraseña"></app-boton-formulario>
+        </form>
+    </div>
+</div>

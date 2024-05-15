@@ -1,0 +1,224 @@
+
+<!-- Modal: Detalles de movimiento -->
+<app-modal-medium [showModal]="showModalDetalles">
+  <div>
+    <div class="flex items-center justify-between p-2 rounded-t bg-primary-800 ">
+      <h1 class="text-white"> Detalles de movimiento </h1>
+      <button (click)="showModalDetalles = false" class="text-white focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>    
+  </div>
+  <div class="text-xs p-2">
+    <div class="md:flex md:items-center md:justify-between">
+      <p> <span class="font-semibold"> Tipo de movimiento: </span> {{ movimientoSeleccionado?.tipo_movimiento.descripcion }} </p>
+      <p> <span class="font-semibold"> Fecha: </span> {{ movimientoSeleccionado?.createdAt | fecha }} </p>
+    </div>
+    <p class="mt-1"> <span class="font-semibold"> Monto: </span> ${{ movimientoSeleccionado?.monto | moneda }} </p>
+    <div class="mt-2 md:flex md:items-center">
+      <div class="md:w-1/2 border border-gray-300 p-2">
+        <p class="font-semibold"> 
+          Origen 
+        </p>
+        <p class="mt-1"> 
+          {{ movimientoSeleccionado?.origen_descripcion }} 
+          <span [ngClass]="{'bg-blue-100 border-blue-300 text-blue-800' : movimientoSeleccionado?.tipo_origen === 'Cliente', 'bg-orange-100 border-orange-300 text-orange-800' : movimientoSeleccionado?.tipo_origen === 'Proveedor', 'bg-green-100 border-green-300 text-green-800' : movimientoSeleccionado?.tipo_origen === 'Interno'}" class="p-1 border text-xs font-semibold text-white rounded"> {{ movimientoSeleccionado?.tipo_origen }} </span>
+        </p>
+        <div *ngIf="movimientoSeleccionado?.tipo_origen === 'Interno'" class="mt-3 flex text-red-700 font-semibold items-center">
+          <span>
+            ${{ movimientoSeleccionado?.origen_monto_anterior | moneda }}
+          </span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+          <span>
+            ${{ movimientoSeleccionado?.origen_monto_nuevo | moneda }}
+          </span>
+        </div>
+        <div class="mt-3 text-gray-500" *ngIf="movimientoSeleccionado?.tipo_origen !== 'Interno'">
+          Saldo externo
+        </div>
+      </div>
+      <div class="md:w-1/2 mt-2 md:mt-0 border md:ml-2 border-gray-300 p-2">
+        <p class="font-semibold"> 
+          Destino
+        </p>
+        <p class="mt-1"> 
+          {{ movimientoSeleccionado?.destino_descripcion }} 
+          <span [ngClass]="{'bg-blue-100 border-blue-300 text-blue-800' : movimientoSeleccionado?.tipo_destino === 'Cliente', 'bg-orange-100 border-orange-300 text-orange-800' : movimientoSeleccionado?.tipo_destino === 'Proveedor', 'bg-green-100 border-green-300 text-green-800' : movimientoSeleccionado?.tipo_destino === 'Interno'}" class="p-1 border text-xs font-semibold text-white rounded"> {{ movimientoSeleccionado?.tipo_destino }} </span>
+        </p>
+        <div *ngIf="movimientoSeleccionado?.tipo_destino === 'Interno'" class="mt-3 flex text-green-700 font-semibold items-center">
+          <span>
+            ${{ movimientoSeleccionado?.destino_monto_anterior | moneda }}
+          </span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+          <span>
+            ${{ movimientoSeleccionado?.destino_monto_nuevo | moneda }}
+          </span>
+        </div>
+        <div class="mt-3 text-gray-500" *ngIf="movimientoSeleccionado?.tipo_destino !== 'Interno'">
+          Saldo externo
+        </div>
+      </div>
+    </div>
+    <p *ngIf="movimientoSeleccionado?.observacion.trim() !== ''" class="mt-2 mb-2"> <span class="font-semibold"> Observación: </span> {{ movimientoSeleccionado?.observacion }} </p>
+  </div>  
+</app-modal-medium>
+
+<!-- Modal: Creacion de movimiento -->
+<app-modal-medium [showModal]="showModalCreacion">
+  <div>
+    <div class="flex items-center justify-between p-2 rounded-t bg-primary-800 ">
+      <h1 class="text-white"> Nuevo movimiento </h1>
+      <button (click)="showModalCreacion = false" class="text-white focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="p-2 text-sm">
+      <div class="mb-3 md:flex md:items-center">
+        <div class="md:w-1/2">
+          <p class="font-semibold"> <span class="text-red-500"> * </span> Tipo de movimiento </p>
+          <select [(ngModel)]="tipo_movimiento" class="border border-gray-400 w-full p-2 focus:outline-none rounded mt-2">
+            <option value=""> Seleccionar tipo </option>
+            <option *ngFor="let tipo of tiposMovimientos" [value]="tipo._id"> {{ tipo.descripcion }} </option>
+          </select>
+        </div>
+        <div class="md:w-1/2 md:ml-2 mt-2 md:mt-0">
+          <p class="font-semibold"> <span class="text-red-500"> * </span> Monto </p>
+          <input [(ngModel)]="monto" type="number" placeholder="Ej. 3000" class="border border-gray-400 w-full p-2 focus:outline-none rounded mt-2">
+        </div>
+      </div>
+      <hr>
+      <div class="md:flex md:items-center mt-2">
+        <div class="md:w-1/2">
+          <p class="font-semibold"> <span class="text-red-500"> * </span> Tipo de origen </p>
+          <select (change)="tipoOrigen()" [(ngModel)]="tipo_origen" class="border w-full border-gray-400 p-2 focus:outline-none rounded mt-2">
+            <option value="Interno"> Interno </option>
+            <option value="Cliente"> Cliente </option>
+            <option value="Proveedor"> Proveedor </option>
+          </select>          
+        </div>
+        <div class="md:w-1/2 md:ml-2 mt-2 md:mt-0">
+          <p class="font-semibold"> <span class="text-red-500"> * </span> Tipo de destino </p>
+          <select (change)="tipoDestino()"  [(ngModel)]="tipo_destino" class="border w-full border-gray-400 p-2 focus:outline-none rounded mt-2">
+            <option value="Interno"> Interno </option>
+            <option value="Cliente"> Cliente </option>
+            <option value="Proveedor"> Proveedor </option>
+          </select>   
+        </div>
+      </div>
+      <div class="md:flex md:items-center mt-2 mb-4">
+        <div class="md:w-1/2">
+          <p class="font-semibold"> <span class="text-red-500"> * </span> Origen </p>
+          <select (change)="seleccionarOrigen()" [(ngModel)]="origen" class="border w-full border-gray-400 p-2 focus:outline-none rounded mt-2">
+            <option value=""> Seleccionar origen </option>
+            <option [value]="origen._id" *ngFor="let origen of origenes"> {{ origen.descripcion }} {{ tipo_origen === 'Interno' ? ' - $' + (origen.saldo | moneda) : null }} </option>
+          </select>          
+        </div>
+        <div class="md:w-1/2 md:ml-2 mt-2 md:mt-0">
+          <p class="font-semibold"> <span class="text-red-500"> * </span> Destino </p>
+          <select (change)="seleccionarDestino()" [(ngModel)]="destino" class="border w-full border-gray-400 p-2 focus:outline-none rounded mt-2">
+            <option value=""> Seleccionar destino </option>
+            <option [value]="destino._id" *ngFor="let destino of destinos"> {{ destino.descripcion }} {{ tipo_destino === 'Interno' ? ' - $' + (destino.saldo | moneda) : null }} </option>
+          </select>   
+        </div>
+      </div>
+      <hr>
+      <div class="mt-2">
+        <p class="font-semibold"> Observación </p>
+        <input [(ngModel)]="observacion" type="text" placeholder="Colocar observación Aquí" class="border w-full border-gray-400 p-2 focus:outline-none rounded mt-2">
+      </div>
+      <button (click)="generarMovimiento()" class="mt-4 border font-semibold focus:outline-none p-2 w-full text-center hover:text-secondaryColor border-gray-400 text-gray-800 bg-gray-100 rounded">
+        Generar movimiento
+      </button>
+    </div>
+  </div>
+</app-modal-medium>
+
+<!-- Pagina principal -->
+<div class="container max-w-4xl mx-auto gsap-contenido">
+  <div class="container max-w-5xl mt-5 m-auto border border-gray-300">
+    <div class="bg-primary-800 p-2 flex items-center justify-between">
+      <div>
+        <h1 class="text-white text-xl"> Listado de movimientos </h1>
+        <p class="text-white"> Total de movimientos: {{ totalItems }} </p>
+      </div>
+      <button title="Nuevo movimiento" (click)="abrirModalCreacion()" class="p-2 border rounded focus:outline-none hover:text-secondaryColor border-gray-300 bg-white">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+      </button>
+    </div>
+    <div class="p-2 text-sm">
+      <div class="mb-3 md:flex md:items-center">
+        <div>
+          <select [(ngModel)]="filtro.tipo_movimiento" (change)="cambiarPagina(1)" class="border mt-1 w-full focus:outline-none rounded border-gray-400 p-2">
+            <option value=""> Todos los tipos </option>
+            <option *ngFor="let tipo of tiposMovimientos" [value]="tipo._id"> {{ tipo.descripcion }} </option>
+          </select>
+        </div>
+        <div class="md:ml-2">
+          <input [(ngModel)]="filtro.parametro" (change)="cambiarPagina(1)" class="border mt-1 w-full focus:outline-none rounded border-gray-400 p-2" placeholder="Buscar" type="text">
+        </div>
+        <div class="flex items-center">
+          <div>
+            <select [(ngModel)]="cantidadItems" (change)="cambiarPagina(1)" class="bg-white md:ml-2 text-sm focus:outline-none p-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
+              <option value="10"> 10 elementos </option>
+              <option value="20"> 20 elementos </option>
+              <option value="50"> 50 elementos </option>
+              <option value="100"> 100 elementos </option>
+            </select>
+          </div>
+          <div>
+            <button (click)="ordenarFecha()" title="Ordenar por fecha" class="border text-primary-800 border-gray-400 mt-2 md:mt-0 ml-2 hover:text-secondaryColor focus:outline-none p-2 rounded">
+              <svg *ngIf="ordenar.direccion === -1" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4" />
+              </svg>
+              <svg *ngIf="ordenar.direccion === 1" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="max-h-96 overflow-y-auto">
+        <div (click)="abrirDetalles(movimiento)" *ngFor="let movimiento of movimientos | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems}" class="border cursor-pointer hover:border-secondaryColor shadow p-2 border-gray-300 mt-2">
+          <div class="md:flex md:items-center md:justify-between">
+            <p class="text-xs"> <span class="font-semibold"> Tipo de movimiento: </span>  {{ movimiento.tipo_movimiento.descripcion }} </p>
+            <p class="mt-1 md:mt-0 text-xs"> <span class="font-semibold"> Fecha: </span>  {{ movimiento.createdAt | fecha }} </p>
+          </div>
+          <div class="md:flex md:items-center mt-3">
+            <!-- Origen -->
+            <div>
+              <p class="text-xs"> {{ movimiento.origen_descripcion }} <span [ngClass]="{'bg-blue-100 border-blue-300 text-blue-800' : movimiento.tipo_origen === 'Cliente', 'bg-orange-100 border-orange-300 text-orange-800' : movimiento.tipo_origen === 'Proveedor', 'bg-green-100 border-green-300 text-green-800' : movimiento.tipo_origen === 'Interno'}" class="p-1 border font-semibold text-white rounded">{{ movimiento.tipo_origen }}</span> </p>
+            </div>
+            <div class="md:ml-1 mt-2 md:mt-0 md:flex md:items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 hidden md:inline-block" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+              <span class="md:ml-1 text-xs font-semibold">
+                ${{ movimiento.monto | moneda }}
+              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 hidden md:inline-block" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <!-- Destino -->
+            <div class="md:ml-1 mt-2 md:mt-0">
+              <p class="text-xs"> {{ movimiento.destino_descripcion }} <span [ngClass]="{'bg-blue-100 border-blue-300 text-blue-800' : movimiento.tipo_destino === 'Cliente', 'bg-orange-100 border-orange-300 text-orange-800' : movimiento.tipo_destino === 'Proveedor', 'bg-green-100 border-green-300 text-green-800' : movimiento.tipo_destino === 'Interno'}" class="p-1 border font-semibold text-white rounded"> {{ movimiento.tipo_destino }} </span> </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="px-5 py-5 mt-4 text-sm bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
+      <pagination-controls nextLabel="Siguiente" previousLabel="Anterior"  (pageChange)="cambiarPagina($event)"></pagination-controls>
+  </div>
+  </div>
+</div>

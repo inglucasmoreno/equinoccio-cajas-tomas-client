@@ -1,0 +1,100 @@
+<div class="relative z-0 bg-primary-800 lg:flex-grow">
+    <header class=" flex overflow-y-auto items-center md:mx-auto md:justify-center text-sm p-2">
+        <div class="flex">
+            <button *ngIf="authService.usuario.role !== 'EMPLOYEE_ROLE'"
+                (click)="dataService.showMenu = !dataService.showMenu"
+                class="p-2 focus:outline-none hover:bg-gray-600 text-white items-center rounded-md">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+            </button>
+            <div class="flex items-center text-white p-2">
+                <img *ngIf="authService.usuario.role !== 'EMPLOYEE_ROLE'" routerLink="/dashboard/home"
+                    src="assets/img/home/equinoccio.png" class="w-7 ml-2 cursor-pointer" alt="Equinoccio.png">
+                <!-- <span class="ml-3">
+                    {{ this.dataService.ubicacionActual }}
+                </span> -->
+                <button *ngIf="permisoCajas" routerLink="/dashboard/cajas" title="Cajas"
+                    class="w-10 h-10 ml-5 border-t-4 border-yellow-500 hover:bg-yellow-100 focus:outline-none transition duration-300 bg-gray-300 rounded text-gray-700">
+                    <span class="font-semibold p-2 text-gray-700">
+                        C
+                    </span>
+                    <!-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-5 h-5 mx-auto">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+                    </svg> -->
+                </button>
+                <button *ngIf="permisoGastos" routerLink="/dashboard/gastos" title="Gastos"
+                    class="w-10 h-10 ml-4 border-t-4 border-red-500 hover:bg-red-100 focus:outline-none transition duration-300 bg-gray-300 rounded text-gray-700">
+                    <span class="font-semibold text-gray-700">
+                        G
+                    </span>
+                    <!-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-5 h-5 mx-auto">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M7.5 7.5h-.75A2.25 2.25 0 004.5 9.75v7.5a2.25 2.25 0 002.25 2.25h7.5a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25h-.75m-6 3.75l3 3m0 0l3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25h-7.5a2.25 2.25 0 01-2.25-2.25v-.75" />
+                    </svg> -->
+                </button>
+                <button *ngIf="permisoMovimientos" routerLink="/dashboard/movimientos-internos" title="Movimientos"
+                    class="w-10 border-t-4 border-yellow-500 h-10 ml-4 hover:bg-yellow-100 focus:outline-none transition duration-300 bg-gray-300 rounded text-gray-700">
+                    <span class="font-semibold text-gray-700">
+                        M
+                    </span>
+                    <!-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-5 h-5 mx-auto">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                    </svg> -->
+                </button>
+                <button *ngIf="permisoVentas" routerLink="/dashboard/ventas-propias" title="Ventas"
+                    class="w-10 border-t-4 border-green-500 h-10 ml-4 hover:bg-green-100 focus:outline-none transition duration-300 bg-gray-300 rounded text-gray-700">
+                    <span class="font-semibold p-2 text-gray-700">
+                        V
+                    </span>
+                    <!-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-5 h-5 mx-auto">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                    </svg> -->
+                </button>
+                <button (click)="logout()" title="Cerrar sesión"
+                    class="p-2 ml-4 flex focus:outline-none bg-red-600 text-white rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                    </svg>
+                    <p *ngIf="authService.usuario.role === 'EMPLOYEE_ROLE'" class="ml-1"> Cerrar sesión </p>
+                </button>
+                <div class="ml-4">
+                    <div title="Usuario sin caja" *ngIf="!this.authService.caja"
+                        class="bg-gray-100 rounded border-r text-gray-500 border-gray-400 p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div *ngIf="this.authService.caja" title="Tu saldo de caja"
+                        class="flex items-center rounded-full bg-white mr-5">
+                        <div (click)="showSaldo = !showSaldo"
+                            class="bg-green-600 cursor-pointer border-r border-green-600 p-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-5 h-5 text-white">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <p *ngIf="showSaldo"
+                            [ngClass]="{'text-red-500': authService?.caja?.saldo < 0, 'text-primary-800': authService?.caja?.saldo >= 0}"
+                            class="pl-2 pr-4"> ${{ authService?.caja?.saldo | moneda
+                            }} </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+</div>

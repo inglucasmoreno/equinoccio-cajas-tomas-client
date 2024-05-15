@@ -1,0 +1,6 @@
+<button [disabled]="deshabilitado" 
+    class="p-2 focus:outline-none text-sm w-full mt-3 rounded shadow-lg"
+    [ngClass]="{'bg-gray-200 border border-gray-300 text-gray-400 font-semibold': deshabilitado, 'bg-green-700 text-white hover:bg-green-600': !deshabilitado}"
+    >
+    {{ texto }}
+</button>

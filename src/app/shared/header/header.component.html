@@ -1,0 +1,212 @@
+<nav [ngClass]="{'-translate-x-0 ease-in opacity-100' : this.dataService.showMenu === true, '-translate-x-full ease-out opacity-0':this.dataService.showMenu === false}"
+    class="absolute inset-0 transform max-h-screen duration-200 ease-in -translate-x-full z-10 w-11/12 md:w-80 bg-primary-800 text-white h-full overflow-y-auto border-r-4 border-gray-500 p-3">
+
+    <div class="flex justify-between">
+
+        <div title="perfil de usuario" routerLink="perfil" class="flex cursor-pointer hover:text-gray-300">
+            <div *ngIf="authService.usuario.role === 'ADMIN_ROLE'"
+                class="bg-blue-100 flex items-center justify-center w-14 h-14 rounded-full shadow border border-blue-200">
+                <p class="text-3xl font-semibold text-blue-900"> A </p>
+            </div>
+            <div *ngIf="authService.usuario.role === 'EMPLOYEE_ROLE'"
+                class="bg-purple-100 flex items-center justify-center w-14 h-14 rounded-full shadow border border-purple-200">
+                <p class="text-3xl font-semibold text-purple-500"> Ue </p>
+            </div>
+            <div *ngIf="authService.usuario.role === 'USER_ROLE'"
+                class="bg-orange-100 flex items-center justify-center w-14 h-14 rounded-full shadow border border-orange-200">
+                <p class="text-3xl font-semibold text-orange-500"> Up </p>
+            </div>
+            <div class='ml-2 mt-2'>
+                <p class="capitalize text-sm font-semibold"> {{ authService.usuario.apellido.toLowerCase() + ' ' +
+                    authService.usuario.nombre.toLowerCase() }} </p>
+                <p class="capitalize text-sm"> {{ authService.usuario.role === 'ADMIN_ROLE' ? 'administrador' :
+                    'usuario' }} </p>
+            </div>
+        </div>
+        <button (click)="this.dataService.showMenu = false" class="p-2 focus:outline-none focus:bg-gray-600 rounded-md">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+    </div>
+
+    <ul class="mt-5 text-sm">
+        <!-- Home -->
+        <li *ngIf="authService.usuario.role !== 'EMPLOYEE_ROLE'"
+            routerLinkActive="bg-yellow-100 text-yellow-600 rounded" routerLink="home"
+            class="flex transform hover:translate-x-2 duration-500 items-center outline-none cursor-pointer p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <a class="ml-2 mt-1"> Inicio </a>
+        </li>
+
+        <!-- Items de navegacion -->
+        <ng-container *ngFor="let element of items">
+            <app-items *appPermisos="element.permiso" [svg]="element.svg" [route]="element.route" [item]="element.item">
+            </app-items>
+        </ng-container>
+
+        <!-- Ventas -->
+        <li *ngIf="authService.usuario.permisos.includes('PRESUPUESTOS_NAV') ||
+                authService.usuario.permisos.includes('VENTAS_DIRECTAS_NAV') || 
+                authService.usuario.permisos.includes('VENTAS_PROPIAS_NAV') ||
+                authService.usuario.permisos.includes('RECIBOS_COBRO_NAV') ||
+                authService.usuario.permisos.includes('CLIENTES_NAV') ||
+                authService.usuario.permisos.includes('CUENTAS_CORRIENTES_CLIENTES_NAV') ||
+                authService.usuario.role === 'ADMIN_ROLE'" (click)="abrirCerrarMenu('ventas')"
+            class="flex items-center justify-between outline-none cursor-pointer p-2">
+
+            <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                </svg>
+                <span class="ml-1"> Ventas </span>
+            </div>
+
+            <div *ngIf="!showVentas" class="bg-primary-600 p-1 font-semibold text-white rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+                </svg>
+            </div>
+
+            <div *ngIf="showVentas" class="bg-primary-600 p-1 font-semibold text-white rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+
+        </li>
+
+        <div *ngIf="showVentas && (
+                authService.usuario.permisos.includes('PRESUPUESTOS_NAV') ||
+                authService.usuario.permisos.includes('VENTAS_DIRECTAS_NAV') || 
+                authService.usuario.permisos.includes('VENTAS_PROPIAS_NAV') ||
+                authService.usuario.permisos.includes('RECIBOS_COBRO_NAV') ||
+                authService.usuario.permisos.includes('CLIENTES_NAV') ||
+                authService.usuario.permisos.includes('CUENTAS_CORRIENTES_CLIENTES_NAV') ||
+                authService.usuario.role === 'ADMIN_ROLE')" class="bg-primary-600 rounded pl-2">
+            <ng-container *ngFor="let element of itemsVentas">
+                <app-items *appPermisos="element.permiso" [svg]="element.svg" [route]="element.route"
+                    [item]="element.item"></app-items>
+            </ng-container>
+        </div>
+
+        <!-- Tesoreria -->
+        <li *ngIf="
+                authService.usuario.permisos.includes('CAJAS_NAV') ||
+                authService.usuario.permisos.includes('MOVIMIENTOS_INTERNOS_NAV') || 
+                authService.usuario.permisos.includes('CHEQUES_NAV') ||
+                authService.usuario.permisos.includes('BANCOS_NAV') ||
+                authService.usuario.permisos.includes('GASTOS_NAV') || 
+                authService.usuario.role === 'ADMIN_ROLE'" (click)="abrirCerrarMenu('tesoreria')"
+            class="flex items-center justify-between outline-none cursor-pointer p-2">
+
+            <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="ml-1"> Tesoreria </span>
+            </div>
+
+            <div *ngIf="!showTesoreria" class="bg-primary-600 p-1 font-semibold text-white rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+                </svg>
+            </div>
+
+            <div *ngIf="showTesoreria" class="bg-primary-600 p-1 font-semibold text-white rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+
+        </li>
+
+        <div *ngIf="showTesoreria && (
+                authService.usuario.permisos.includes('CAJAS_NAV') ||
+                authService.usuario.permisos.includes('MOVIMIENTOS_INTERNOS_NAV') || 
+                authService.usuario.permisos.includes('CHEQUES_NAV') ||
+                authService.usuario.permisos.includes('BANCOS_NAV') ||
+                authService.usuario.permisos.includes('GASTOS_NAV') ||     
+                authService.usuario.role === 'ADMIN_ROLE')" class="bg-primary-600 rounded pl-2">
+            <ng-container *ngFor="let element of itemsTesoreria">
+                <app-items *appPermisos="element.permiso" [svg]="element.svg" [route]="element.route"
+                    [item]="element.item"></app-items>
+            </ng-container>
+        </div>
+
+        <!-- Configuraciones -->
+        <li *ngIf="
+                authService.usuario.permisos.includes('USUARIOS_NAV') ||
+                authService.usuario.permisos.includes('TIPOS_GASTOS_NAV') || 
+                authService.usuario.permisos.includes('UNIDADES_MEDIDA_NAV') ||
+                authService.usuario.permisos.includes('FAMILIA_PRODUCTOS_NAV') ||
+                authService.usuario.permisos.includes('PRODUCTOS_NAV') || 
+                authService.usuario.role === 'ADMIN_ROLE'" (click)="abrirCerrarMenu('configuraciones')"
+            class="flex items-center justify-between outline-none cursor-pointer p-2">
+
+            <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+
+                <span class="ml-1"> Configuraciones </span>
+            </div>
+
+            <div *ngIf="!showConfiguraciones" class="bg-primary-600 p-1 font-semibold text-white rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+                </svg>
+            </div>
+
+            <div *ngIf="showConfiguraciones" class="bg-primary-600 p-1 font-semibold text-white rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+
+        </li>
+
+        <div *ngIf="showConfiguraciones && (
+                authService.usuario.permisos.includes('USUARIOS_NAV') ||
+                authService.usuario.permisos.includes('TIPOS_GASTOS_NAV') || 
+                authService.usuario.permisos.includes('UNIDADES_MEDIDA_NAV') ||
+                authService.usuario.permisos.includes('FAMILIA_PRODUCTOS_NAV') ||
+                authService.usuario.permisos.includes('PRODUCTOS_NAV') ||     
+                authService.usuario.role === 'ADMIN_ROLE')" class="bg-primary-600 rounded pl-2">
+            <ng-container *ngFor="let element of itemsConfiguraciones">
+                <app-items *appPermisos="element.permiso" [svg]="element.svg" [route]="element.route"
+                    [item]="element.item"></app-items>
+            </ng-container>
+        </div>
+
+        <!-- Finalizar sesion -->
+        <li (click)="logout()"
+            class="flex outline-none transform hover:translate-x-2 duration-500 items-center cursor-pointer p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+            </svg>
+            <a class="ml-2 mt-1"> Cerrar sesion </a>
+        </li>
+
+    </ul>
+
+</nav>

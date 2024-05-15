@@ -1,0 +1,262 @@
+
+<app-modal [showModal]="showModalCajaUsuario">
+    
+    <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
+        <h1 class=" text-white px-2 py-1 rounded-t text-lg"> Seleccionando caja </h1>
+        <svg (click)="showModalCajaUsuario = false" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="cursor-pointer feather feather-x text-white mr-2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    </div>
+
+    <div *ngIf="estadoSeccionCajas === 'Inicial'">
+        <div class="px-3 pt-3 flex items-center">
+            <select [(ngModel)]="cajaSeleccionada" class="p-2 border text-sm border-gray-400 w-full rounded focus:outline-none">
+                <option value=""> Seleccionar caja </option>
+                <option *ngFor="let caja of cajas" [value]="caja._id"> {{ caja.descripcion }} </option>
+            </select>
+            <button (click)="cambiarEstadoModal('NuevaCaja')" title="Crear nueva caja"
+                class="p-2 border bg-gray-100 border-gray-400 hover:text-green-700 focus:outline-none ml-2 rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                </svg>
+            </button>
+        </div>
+        <div class="px-2 pb-3">
+            <app-boton-formulario (click)="seleccionarCaja()" texto="Seleccionar caja"></app-boton-formulario>
+        </div>
+    </div>
+
+    <div *ngIf="estadoSeccionCajas === 'NuevaCaja'" class="p-2 text-sm">
+        <div>
+            <p class="font-semibold bg-gray-100 p-2 border border-gray-400 text-center"> Creando nueva caja </p>
+            <div class="md:flex md:items-center mt-2">
+                <input (keyup.enter)="crearAsignarCaja()" [(ngModel)]="nuevaCaja.descripcion" type="text"
+                    placeholder="Nombre de caja"
+                    class="p-2 w-full md:w-1/2 rounded focus:outline-none border border-gray-400">
+                <input (keyup.enter)="crearAsignarCaja()" [(ngModel)]="nuevaCaja.saldo" type="number"
+                    placeholder="Saldo inicial"
+                    class="p-2 w-full mt-2 md:mt-0 md:w-1/2 rounded md:ml-2 focus:outline-none border border-gray-400">
+            </div>
+            <div class="w-full flex items-center mt-4">
+                <button (click)="crearAsignarCaja()"
+                    class="p-2 bg-green-700 focus:outline-none shadow hover:bg-green-600 text-white rounded w-1/2">
+                    Crear y asignar
+                </button>
+                <button (click)="cambiarEstadoModal('Inicial')"
+                    class="p-2 ml-2 bg-red-700 focus:outline-none shadow hover:bg-red-600 text-white rounded w-1/2">
+                    Regresar
+                </button>
+            </div>
+        </div>
+    </div>
+
+</app-modal>
+
+<div class="lg:flex p-4 gsap-contenido max-w-5xl mx-auto">
+
+    <div class="w-full lg:w-1/2 bg-white mr-2 shadow rounded border border-gray-200">
+
+        <!-- Cuerpo de formulario -->
+        <div [formGroup]="usuarioForm" class="">
+            <div class="flex items-center p-2 bg-primary-800 rounded-t">
+                <app-boton-regresar routerLink="/dashboard/usuarios"></app-boton-regresar>
+                <h1 class="ml-2 text-xl md:text-2xl text-white"> Datos de usuario </h1>
+            </div>
+            <div class="px-4">
+                <div class="flex flex-col lg:flex-row">
+                    <div class="w-full mx-2 flex-1 svelte-1l8159u">
+                        <div class="font-semibold bold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Nombre de usuario
+                        </div>
+                        <div class="bg-white my-2 p-1 flex">
+                            <input placeholder="Ej. lmoreno"
+                                class="p-1 px-2 border-b-2 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800 text-sm"
+                                formControlName="usuario">
+                        </div>
+                    </div>
+                    <div class="w-full mx-2 flex-1 svelte-1l8159u">
+                        <div class="font-semibold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Email
+                        </div>
+                        <div class="bg-white my-2 p-1 flex">
+                            <input type="email" formControlName="email" placeholder="Ej. lucasmoreno@gmail.com"
+                                class="p-1 px-2 border-b-2 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800 text-sm">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row">
+                    <div class="w-full mx-2 flex-1 svelte-1l8159u">
+                        <div class="font-semibold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Apellido
+                        </div>
+                        <div class="bg-white my-2 p-1 flex">
+                            <input placeholder="Ej. Moreno" formControlName="apellido"
+                                class="p-1 px-2 border-b-2 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800 text-sm">
+                        </div>
+                    </div>
+                    <div class="w-full mx-2 flex-1 svelte-1l8159u">
+                        <div class="font-semibold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Nombre
+                        </div>
+                        <div class="bg-white my-2 p-1 flex">
+                            <input placeholder="Ej. Lucas" formControlName="nombre"
+                                class="p-1 px-2 border-b-2 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800 text-sm">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row">
+                    <div class="w-full mx-2 flex-1">
+                        <div class="font-semibold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> DNI
+                        </div>
+                        <div class="bg-white mt-2 p-1 flex">
+                            <input placeholder="Ej. 34060398" formControlName="dni"
+                                class="p-1 px-2 border-b-2 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800 text-sm">
+                        </div>
+                    </div>
+                    <div class="w-full mx-2 flex-1">
+                        <div class="font-semibold mt-2 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Rol
+                        </div>
+                        <div class="bg-white my-2 flex">
+                            <select
+                                class="bg-white tranform duration-500 focus:border-secondaryColor p-1 py-2 w-full text-sm border-b-2 outline-none"
+                                formControlName="role">
+                                <option value="EMPLOYEE_ROLE"> Usuario estandar </option>
+                                <option value="USER_ROLE"> Usuario personalizado </option>
+                                <option value="ADMIN_ROLE"> Administrador </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row mt-2">
+                    <div class="w-full mx-2 flex-1">
+                        <div class="font-semibold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Contraseña
+                        </div>
+                        <div class="bg-white my-2 p-1 flex">
+                            <input type="password" formControlName="password" placeholder="******"
+                                class="p-1 px-2 border-b-2 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800 text-sm">
+                        </div>
+                    </div>
+                    <div class="w-full mx-2 flex-1">
+                        <div class="font-semibold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Repetir contraseña
+                        </div>
+                        <div class="bg-white my-2 p-1 flex">
+                            <input type="password" formControlName="repetir" placeholder="******"
+                                class="p-1 px-2 border-b-2 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800 text-sm">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row mt-2">
+                    <div class="w-full mx-2 flex-1">
+                        <div class="font-semibold mt-3 text-gray-600 text-sm">
+                            <span class="text-red-500"> * </span> Estado
+                        </div>
+                        <div class="bg-white my-2 flex">
+                            <select
+                                class="bg-white tranform duration-500 focus:border-secondaryColor p-1 py-2 w-full text-sm border-b-2 outline-none"
+                                formControlName="activo">
+                                <option value=true> Activo </option>
+                                <option value=false> Inactivo </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="w-full mx-2 flex-1"></div>
+                </div>
+            </div>
+            <div class="pb-3 px-2">
+                <app-boton-formulario
+                    [deshabilitado]="!usuarioForm.valid || (usuarioForm.value.password.trim() !== usuarioForm.value.repetir.trim())"
+                    texto="Crear usuario" (click)="nuevoUsuario()"></app-boton-formulario>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full lg:w-1/2 mt-2 lg:mt-0 h-full">
+        <!-- Creacion de usuario -->
+        <div class="bg-white border shadow border-gray-300 p-4 rounded ">
+            <div class="flex mb-2">
+                <div *ngIf="usuarioForm.value.role === 'ADMIN_ROLE'"
+                    class="bg-blue-100 flex items-center justify-center w-32 h-32 rounded-full shadow border border-blue-200">
+                    <p class="text-6xl font-semibold text-blue-900"> A </p>
+                </div>
+                <div *ngIf="usuarioForm.value.role === 'USER_ROLE'"
+                    class="bg-orange-100 flex items-center justify-center w-32 h-32 rounded-full shadow border border-orange-200">
+                    <p class="text-6xl font-semibold text-orange-500"> Up </p>
+                </div>
+                <div *ngIf="usuarioForm.value.role === 'EMPLOYEE_ROLE'"
+                    class="bg-purple-100 flex items-center justify-center w-32 h-32 rounded-full shadow border border-purple-200">
+                    <p class="text-6xl font-semibold text-purple-500"> Ue </p>
+                </div>
+                <div class="ml-4 mt-2">
+                    <div class="mt-1">
+
+                        <!-- Usuario de sistema -->
+                        <div class="text-xl lg:text-3xl">
+                            <p *ngIf="usuarioForm.value.usuario.trim() !== ''" class="font-semibold"> {{
+                                usuarioForm.value.usuario }} </p>
+                            <p class="text-gray-400" *ngIf="usuarioForm.value.usuario.trim() == ''"> Nombre de usuario
+                            </p>
+                        </div>
+
+                        <!-- Apellido y Nombre -->
+                        <div class="text-md lg:text-2xl">
+                            <p *ngIf="usuarioForm.value.nombre.trim() || usuarioForm.value.apellido.trim()"
+                                class="capitalize"> {{ usuarioForm.value.nombre.toLowerCase() }} {{
+                                usuarioForm.value.apellido.toLowerCase() }} </p>
+                            <p class="text-gray-400"
+                                *ngIf="usuarioForm.value.nombre.trim() == '' && usuarioForm.value.apellido.trim() == ''">
+                                Apellido y Nombre </p>
+                        </div>
+
+                        <!-- Correo electronico -->
+                        <div class="text-xs lg:text-lg text-gray-400">
+                            <p *ngIf="usuarioForm.value.email.trim() !== ''"> {{ usuarioForm.value.email.toLowerCase()
+                                }} </p>
+                            <p *ngIf="usuarioForm.value.email.trim() == ''"> Correo electrónico </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="border border-gray-300 shadow rounded mt-4">
+            
+            <div class="p-2 text-lg rounded-t text-center border-primary-800 bg-primary-800 text-white">
+                Caja de usuario
+            </div>
+
+            <div *ngIf="!cajaSeleccionadaFinal" class="p-2">
+                <p class="text-gray-500 text-center">
+                    El usuario no tiene caja asignada
+                </p>
+                <app-boton-formulario (click)="abrirModalCajaUsuario()" texto="Asignar caja"></app-boton-formulario>
+            </div>
+
+            <div *ngIf="cajaSeleccionadaFinal" class="p-2 mt-2">
+                <div class="border flex items-center justify-between border-gray-400 p- 2">
+                    <p class="font-semibold w-1/2 text-center bg-gray-100 p-2"> Nombre de caja </p>
+                    <p class="w-1/2 border-l border-gray-400 text-center p-2"> {{ cajaSeleccionadaFinal?.descripcion }} </p>
+                </div>
+                <div class="border flex items-center border-t-0 justify-between border-gray-400 p- 2">
+                    <p class="font-semibold w-1/2 bg-gray-100 text-center p-2"> Saldo actual </p>
+                    <p class="w-1/2 border-l border-gray-400 text-center p-2"> ${{ cajaSeleccionadaFinal?.saldo | moneda }}
+                    </p>
+                </div>
+                <button (click)="desvincularCaja()"
+                    class="p-2 w-full hover:bg-red-600 rounded bg-red-700 focus:outline-none text-white mt-4 text-sm">
+                    Desvincular caja
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+</div>

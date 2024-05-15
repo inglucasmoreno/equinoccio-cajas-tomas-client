@@ -1,0 +1,330 @@
+<app-tarjeta-lista *ngIf="usuarios">
+    <div class="max-w-full mx-auto">
+        <div class="flex items-center w-full justify-between bg-primary-800 text-white px-4 py-3 rounded-t">
+            <div class="ml-2">
+                <h2 class="text-xl md:text-2xl leading-tight">
+                    Listado de usuarios
+                </h2>
+                <p> Total de usuarios: {{ usuarios.length }} </p>
+            </div>
+            <div>
+                <app-boton-generico title="Nuevo usuario" *appPermisos="permiso_escritura"
+                    routerLink="/dashboard/usuarios/nuevo">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                </app-boton-generico>
+            </div>
+        </div>
+        <div class="py-4 px-4 text-sm">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="my-2 flex sm:flex-row flex-col">
+                    <div class="flex flex-row mb-1 sm:mb-0">
+                        <div class="relative">
+                            <select #txtActivo (change)="filtrarActivos(txtActivo.value)"
+                                class="h-full rounded-r border-t border-l rounded-l sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
+                                <option value='true'> Activos </option>
+                                <option value='false'> Inactivos </option>
+                                <option value=''> Todos </option>
+                            </select>
+                            <div
+                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20">
+                                    <path
+                                        d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="block relative mt-1 md:mt-0">
+                        <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
+                            <svg viewBox="0 0 24 24"
+                                class="h-4 w-4 fill-current text-gray-500 cursor-pointer hover:text-secondaryColor">
+                                <path
+                                    d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z">
+                                </path>
+                            </svg>
+                        </span>
+                        <input #txtParametro placeholder="Buscar" (change)="filtrarParametro(txtParametro.value)"
+                            class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none" />
+                    </div>
+                    <select [(ngModel)]="cantidadItems"
+                        class="md:ml-2 mt-2 md:mt-0 w-max outline-none p-2 md:p-1 bg-white border border-gray-400 rounded">
+                        <option value="10"> 10 elementos </option>
+                        <option value="20"> 20 elementos </option>
+                        <option value="50"> 50 elementos </option>
+                        <option value="100"> 100 elementos </option>
+                    </select>
+                </div>
+            </div>
+            <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+                <div class="inline-block max-h-96 overflow-y-auto border border-gray-200 min-w-full shadow rounded-lg">
+                    <table class="min-w-full leading-normal">
+                        <thead>
+                            <tr>
+                                <th
+                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-600 tracking-wider">
+                                    <div (click)="ordenarPorColumna('role')"
+                                        class="cursor-pointer flex items-center focus:outline-none">
+                                        <span> Tipo </span>
+                                        <span class="ml-2 text-gray-600">
+                                            <svg *ngIf="ordenar.columna == 'role' && ordenar.direccion == 1" width="15"
+                                                height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="feather feather-chevron-down">
+                                                <polyline points="6 9 12 15 18 9"></polyline>
+                                            </svg>
+                                            <svg *ngIf="ordenar.columna == 'role' && ordenar.direccion == -1" width="15"
+                                                height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="feather feather-chevron-up">
+                                                <polyline points="18 15 12 9 6 15"></polyline>
+                                            </svg>
+                                            <svg *ngIf="ordenar.columna != 'role'" width="15" height="15"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="feather feather-minus">
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th
+                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-600 tracking-wider">
+                                    <div (click)="ordenarPorColumna('apellido')"
+                                        class="cursor-pointer flex items-center focus:outline-none">
+                                        <span> Apellido </span>
+                                        <span class="ml-2 text-gray-600">
+                                            <svg *ngIf="ordenar.columna == 'apellido' && ordenar.direccion == 1"
+                                                width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round" class="feather feather-chevron-down">
+                                                <polyline points="6 9 12 15 18 9"></polyline>
+                                            </svg>
+                                            <svg *ngIf="ordenar.columna == 'apellido' && ordenar.direccion == -1"
+                                                width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round" class="feather feather-chevron-up">
+                                                <polyline points="18 15 12 9 6 15"></polyline>
+                                            </svg>
+                                            <svg *ngIf="ordenar.columna != 'apellido'" width="15" height="15"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="feather feather-minus">
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th
+                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-600 tracking-wider">
+                                    <div (click)="ordenarPorColumna('nombre')"
+                                        class="cursor-pointer flex items-center focus:outline-none">
+                                        <span>
+                                            Nombre
+                                        </span>
+                                        <span class="ml-2">
+                                            <svg *ngIf="ordenar.columna == 'nombre' && ordenar.direccion == 1"
+                                                width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round" class="feather feather-chevron-down">
+                                                <polyline points="6 9 12 15 18 9"></polyline>
+                                            </svg>
+                                            <svg *ngIf="ordenar.columna == 'nombre' && ordenar.direccion == -1"
+                                                width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round" class="feather feather-chevron-up">
+                                                <polyline points="18 15 12 9 6 15"></polyline>
+                                            </svg>
+                                            <svg *ngIf="ordenar.columna != 'nombre'" width="15" height="15"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="feather feather-minus">
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th
+                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <div (click)="ordenarPorColumna('dni')"
+                                        class="cursor-pointer flex items-center focus:outline-none">
+                                        <span>
+                                            DNI
+                                        </span>
+                                        <span class="ml-2">
+                                            <svg *ngIf="ordenar.columna == 'dni' && ordenar.direccion == 1" width="15"
+                                                height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="feather feather-chevron-down">
+                                                <polyline points="6 9 12 15 18 9"></polyline>
+                                            </svg>
+                                            <svg *ngIf="ordenar.columna == 'dni' && ordenar.direccion == -1" width="15"
+                                                height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="feather feather-chevron-up">
+                                                <polyline points="18 15 12 9 6 15"></polyline>
+                                            </svg>
+                                            <svg *ngIf="ordenar.columna != 'dni'" width="15" height="15"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="feather feather-minus">
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th
+                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-600 tracking-wider">
+                                    <div (click)="ordenarPorColumna('usuario')"
+                                        class="cursor-pointer flex items-center focus:outline-none">
+                                        <span>
+                                            Usuario
+                                        </span>
+                                        <span class="ml-2">
+                                            <svg *ngIf="ordenar.columna == 'usuario' && ordenar.direccion == 1"
+                                                width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round" class="feather feather-chevron-down">
+                                                <polyline points="6 9 12 15 18 9"></polyline>
+                                            </svg>
+                                            <svg *ngIf="ordenar.columna == 'usuario' && ordenar.direccion == -1"
+                                                width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round" class="feather feather-chevron-up">
+                                                <polyline points="18 15 12 9 6 15"></polyline>
+                                            </svg>
+                                            <svg *ngIf="ordenar.columna != 'usuario'" width="15" height="15"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="feather feather-minus">
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th *appPermisos="permiso_escritura"
+                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-600 tracking-wider">
+                                    <div (click)="ordenarPorColumna('activo')"
+                                        class="cursor-pointer flex items-center focus:outline-none">
+                                        <span>
+                                            Estado
+                                        </span>
+                                        <span class="ml-2">
+                                            <svg *ngIf="ordenar.columna == 'activo' && ordenar.direccion == 1"
+                                                width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round" class="feather feather-chevron-down">
+                                                <polyline points="6 9 12 15 18 9"></polyline>
+                                            </svg>
+                                            <svg *ngIf="ordenar.columna == 'activo' && ordenar.direccion == -1"
+                                                width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round" class="feather feather-chevron-up">
+                                                <polyline points="18 15 12 9 6 15"></polyline>
+                                            </svg>
+                                            <svg *ngIf="ordenar.columna != 'activo'" width="15" height="15"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="feather feather-minus">
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th *appPermisos="permiso_escritura"
+                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-600 tracking-wider">
+                                    Acción
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="animate__animated animate__fadeIn"
+                                *ngFor="let usuario of usuarios | filtroUsuarios:filtro.parametro:filtro.activo | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual}">
+                                <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <div class="text-gray-900 whitespace-no-wrap">
+                                        <div *ngIf="usuario.role == 'EMPLOYEE_ROLE'"
+                                            class="bg-purple-100 flex items-center font-semibold text-purple-500 text-2xl justify-center w-10 h-10 rounded-full shadow border border-purple-200"
+                                            src="assets/img/usuarios/usuario_estandar.png" alt="Avatar">
+                                            Ue
+                                        </div>
+                                        <div *ngIf="usuario.role == 'USER_ROLE'"
+                                            class="bg-orange-100 flex items-center font-semibold text-orange-500 text-2xl justify-center w-10 h-10 rounded-full shadow border border-orange-200"
+                                            src="assets/img/usuarios/usuario_estandar.png" alt="Avatar">
+                                            Up
+                                        </div>
+                                        <div *ngIf="usuario.role == 'ADMIN_ROLE'"
+                                            class="bg-blue-100 flex items-center font-semibold text-blue-900 text-2xl justify-center w-10 h-10 rounded-full shadow border border-blue-200"
+                                            src="assets/img/usuarios/usuario_estandar.png" alt="Avatar">
+                                            A
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 whitespace-no-wrap capitalize">
+                                        {{ usuario.apellido.toLowerCase() }}
+                                    </p>
+                                </td>
+                                <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 whitespace-no-wrap capitalize">
+                                        {{ usuario.nombre.toLowerCase() }}
+                                    </p>
+                                </td>
+                                <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 whitespace-no-wrap">
+                                        {{ usuario.dni }}
+                                    </p>
+                                </td>
+                                <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 whitespace-no-wrap">
+                                        {{ usuario.usuario }}
+                                    </p>
+                                </td>
+                                <td *appPermisos="permiso_escritura" class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <app-pastilla-estado [activo]=usuario.activo
+                                        (click)="actualizarEstado(usuario)"></app-pastilla-estado>
+                                </td>
+                                <td *appPermisos="permiso_escritura"
+                                    class="px-5 py-2 border-b border-gray-200 text-xs text-center">
+                                    <p class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
+                                        <app-boton-tabla title="Editar usuario"
+                                            [routerLink]="['/dashboard/usuarios/editar', usuario._id]">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                                            </svg>
+                                        </app-boton-tabla>
+                                        <app-boton-tabla title="Actualizar contraseña" class="ml-2"
+                                            [routerLink]="['/dashboard/usuarios/password', usuario._id]">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                                            </svg>
+                                        </app-boton-tabla>
+                                        <app-boton-tabla *ngIf="usuario.role !== 'ADMIN_ROLE'" title="Permisos"
+                                            class="ml-2" [routerLink]="['/dashboard/usuarios/permisos', usuario._id]">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M12 9v3.75m0-10.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 13.036h.008v.008H12v-.008z" />
+                                            </svg>
+                                        </app-boton-tabla>
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="usuarios.length > cantidadItems"
+            class="px-5 py-5 bg-white border-t text-sm flex shadow flex-col xs:flex-row items-center xs:justify-between">
+            <pagination-controls nextLabel="Siguiente" previousLabel="Anterior"
+                (pageChange)="paginaActual = $event"></pagination-controls>
+        </div>
+    </div>
+</app-tarjeta-lista>
