@@ -31,14 +31,19 @@
             </select>
           </div>
           <div class="md:w-1/2 md:ml-4 mt-4 md:mt-0">
-            <div class="w-full">
+            <p class="font-semibold"> <span class="text-red-500"> * </span> Familia </p>
+            <select [(ngModel)]="productoForm.familia" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor outline-none w-full text-gray-800">
+                <option value=""> Seleccionar familia </option>
+                <option *ngFor="let familia of familias" [value]="familia._id"> {{ familia.descripcion }} </option>
+            </select>
+            <!-- <div class="w-full">
                 <p class="font-semibold"> Cantidad </p>
                 <input (keyup.enter)="nuevoProducto()" min="0" [(ngModel)]="productoForm.cantidad" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 100" type="number">
-            </div>
+            </div> -->
           </div>
         </div>
 
-        <div class="md:flex md:items-center mt-4">
+        <!-- <div class="md:flex md:items-center mt-4">
             <div class="md:w-1/2">
                 <p class="font-semibold"> <span class="text-red-500"> * </span> Alerta de stock mínimo </p>
                 <select [(ngModel)]="productoForm.stock_minimo_alerta" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor outline-none w-full text-gray-800">
@@ -53,9 +58,9 @@
                   <input *ngIf="productoForm.stock_minimo_alerta === 'true'" (keyup.enter)="nuevoProducto()" min="0" [(ngModel)]="productoForm.cantidad_minima" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 5" type="number">
               </div>
             </div>
-        </div>
+        </div> -->
 
-        <div class="md:flex md:items-center mt-4">
+        <!-- <div class="md:flex md:items-center mt-4">
           <div class="md:w-1/2">
             <p class="font-semibold"> <span class="text-red-500"> * </span> Familia </p>
             <select [(ngModel)]="productoForm.familia" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor outline-none w-full text-gray-800">
@@ -67,7 +72,7 @@
             <p class="font-semibold"> Precio </p>
             <input (keyup.enter)="nuevoProducto()" min="0" [(ngModel)]="productoForm.precio" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 1800" type="number">
           </div>
-        </div>
+        </div> -->
 
     </div>
     <div class="px-2 pb-2">
